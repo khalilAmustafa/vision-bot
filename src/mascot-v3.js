@@ -174,18 +174,28 @@ export class VisionMascot {
       if(emotion==='curious'&&i===0){
         c.beginPath();c.ellipse(x,y,40,55*(1-.90*blink),0,0,Math.PI*2);c.fill();continue;
       }
-      // A neutral pair of warm-yellow ovals morphs into smiling arcs.
-      if(smile<.999){
-        c.globalAlpha=(1-smile);
-        c.beginPath();c.ellipse(x,y,63,h,0,0,Math.PI*2);c.fill();
+      // Continuous shape morph (oval → curved smiling eye). No overlapping
+      // transparent eyes, so intermediate frames never double-ghost.
+      const m=Math.min(1,Math.max(0,smile));
+      const N=32;
+      c.beginPath();
+      for(let j=0;j<=N;j++){
+        const u=j/N, v=2*u-1, arc=4*u*(1-u);
+        const px=x + (1-m)*63*v + m*60*v;
+        const oval=y-Math.sqrt(Math.max(0,1-v*v))*h;
+        const happy=y+16-98*arc;
+        const py=y+( ((1-m)*oval +m*happy)-y)*(1-blink);
+        if(j===0)c.moveTo(px,py);else c.lineTo(px,py);
       }
-      if(smile>.001){
-        c.globalAlpha=smile;
-        c.beginPath();c.lineWidth=36;c.moveTo(x-60,y+28);
-        c.quadraticCurveTo(x,y-68*(1-blink)+y*blink*.0,x+60,y+28);
-        c.stroke();
+      for(let j=N;j>=0;j--){
+        const u=j/N,v=2*u-1,arc=4*u*(1-u);
+        const px=x+(1-m)*63*v+m*60*v;
+        const oval=y+Math.sqrt(Math.max(0,1-v*v))*h;
+        const happy=y+49-98*arc;
+        const py=y+(((1-m)*oval+m*happy)-y)*(1-blink);
+        c.lineTo(px,py);
       }
-      c.globalAlpha=1;
+      c.closePath();c.fill();
     }
     c.fillStyle=glow;c.strokeStyle=glow;
     c.beginPath();
@@ -240,6 +250,7 @@ export class VisionMascot {
     r.position.z=damp(r.position.z,.055+pose.shoulderOffsetZ,10);
     this.parts.leftFlipper.rotation.z=damp(this.parts.leftFlipper.rotation.z,-.24,10);
     this.parts.rightFlipper.rotation.z=damp(this.parts.rightFlipper.rotation.z,.24+pose.wristWave,15);
+    this.parts.rightFlipper.scale.y=damp(this.parts.rightFlipper.scale.y,1+pose.armStretch,10);
     this.parts.legL.rotation.x=damp(this.parts.legL.rotation.x,pose.feet,9);
     this.parts.legR.rotation.x=damp(this.parts.legR.rotation.x,-pose.feet,9);
     // Blinks have eyelid opening/closing rather than a one-frame disappearance.
