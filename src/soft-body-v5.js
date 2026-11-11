@@ -17,14 +17,15 @@ function union(a,b,k){
 }
 function field(x,y,z){
   // Broad lower torso with narrow upper chest, all soft-surface and reference scale.
-  let q=ellipsoid(x,y,z,0,-.672,.006,.648,.486,.497);
-  q=union(q,ellipsoid(x,y,z,0,-.337,.0,.448,.285,.42),.19);
+  let q=ellipsoid(x,y,z,0,-.675,.006,.591,.502,.477);
+  q=union(q,ellipsoid(x,y,z,0,-.337,.0,.392,.274,.378),.17);
+  q=union(q,ellipsoid(x,y,z,0,-.156,-.002,.306,.194,.312),.14);
   for(const s of [-1,1]){
     // Shoulders are fused under the chest silhouette, not balls glued onto it.
-    q=union(q,ellipsoid(x,y,z,s*.574,-.518,.018,.269,.286,.258),.205);
-    q=union(q,ellipsoid(x,y,z,s*.768,-.780,.018,.217,.354,.242),.115);
+    q=union(q,ellipsoid(x,y,z,s*.522,-.528,.025,.208,.249,.212),.165);
+    q=union(q,ellipsoid(x,y,z,s*.690,-.797,.025,.177,.325,.204),.138);
     // Thick feet with the separation between them preserved.
-    q=union(q,ellipsoid(x,y,z,s*.294,-1.343,.085,.274,.329,.299),.095);
+    q=union(q,ellipsoid(x,y,z,s*.294,-1.334,.085,.278,.338,.294),.135);
   }
   return q;
 }
@@ -32,11 +33,11 @@ function getWeights(x,y,z){
   const right=x>=0, abs=Math.abs(x);
   // Broad continuous transitions around shoulder. The root keeps control of the
   // central torso and shared shoulder skin to avoid tearing or hard joins.
-  let arm=smooth(abs,.40,.84)*smooth(-y,.27,.55)*(1-smooth(-y,1.05,1.28))*.97;
+  let arm=smooth(abs,.35,.79)*smooth(-y,.27,.55)*(1-smooth(-y,1.05,1.28))*.97;
   let foot=smooth(-y,1.00,1.43)*smooth(abs,.06,.29)*.94;
   const den=Math.max(1,arm+foot);
   arm/=den;foot/=den;
-  const wrist=arm*smooth(-y,.66,1.03)*.48;
+  const wrist=arm*smooth(-y,.63,1.01)*.63;
   const shoulder=arm-wrist;
   const root=Math.max(0,1-arm-foot);
   // Bone order: 0=root, 1=left shoulder, 2=left wrist,
