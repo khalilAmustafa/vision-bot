@@ -25,5 +25,25 @@ await shot('desktop-side',{width:1440,height:950},['[data-view=side]']);
 await shot('desktop-front',{width:1440,height:950},['[data-view=front]']);
 await shot('desktop-back',{width:1440,height:950},['[data-view=back]']);
 await shot('mobile-idle',{width:390,height:844});
+// Sample actual WebGL keyposes through the full 3.65-second wave, not a single still.
+const seq=await browser.newPage({viewport:{width:1040,height:850},deviceScaleFactor:1});
+const seqErrors=[];
+seq.on('pageerror',e=>seqErrors.push(String(e)));
+await seq.goto('http://127.0.0.1:4173/index-v3-preview.html',{waitUntil:'domcontentloaded'});
+await seq.waitForTimeout(3400);
+const times=[.08,.3,.58,.83,1.12,1.42,1.7,2.05,2.45,2.85,3.2,3.58];
+const arms=[];
+for(let i=0;i<times.length;i++){
+  const time=times[i];
+  await seq.evaluate(seconds=>window.__VISION_MOTION_REVIEW__.pose('wave',seconds),time);
+  await seq.waitForTimeout(420);
+  const pose=await seq.evaluate(()=>window.__VISION_MOTION_REVIEW__.status());
+  arms.push({time,angle:pose.rightArm});
+  await seq.locator('#stage').screenshot({path:'review-artifacts/wave-'+String(i).padStart(2,'0')+'.png'});
+}
+console.log('WAVE-KEYFRAMES',JSON.stringify(arms));
+if(Math.max(...arms.map(p=>p.angle))<1.2)failures.push({name:'wave-not-raising',arms});
+if(seqErrors.length)failures.push({name:'wave-sequence-errors',errors:seqErrors});
+await seq.close();
 await browser.close();
 if(failures.length){console.error('VISUAL SMOKE FAIL',JSON.stringify(failures));process.exit(1)}
