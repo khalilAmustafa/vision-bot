@@ -36,6 +36,15 @@ const rim=new THREE.DirectionalLight('#e9fff0',2.0);rim.position.set(2.5,4,-4);s
 const low=new THREE.DirectionalLight('#c9d9d1',.6);low.position.set(-4,-1,-5);scene.add(low);
 
 const bot=new VisionMascot(scene);
+let motionClock=performance.now()/1000;
+let playbackRate=1;
+let debugPose=null;
+// Deterministic pose-scrubbing for visual QA. Never touches CV or actual camera state.
+window.__VISION_MOTION_REVIEW__={
+  pose(name,seconds){debugPose={name,seconds};introDone=true;bot.active={name,start:100,duration:name==='wave'||name==='greet'?3.65:2.2};bot.expression=name==='greet'?'wave':name;},
+  resume(){debugPose=null;bot.reset()},
+  status(){return {clip:bot.active?.name||'idle',camera:!!vision?.running,rate:playbackRate}}
+};
 let cameraTarget=null;
 const views={
  front:[0,.15,6.15],
@@ -60,11 +69,17 @@ const speech={
  idle:'Hey! Welcome to VISION.'
 };
 function trigger(name){
-  bot.trigger(name,performance.now()/1000);
+  debugPose=null;bot.trigger(name,motionClock);
   $('speech').textContent=speech[name]||speech.idle;
 }
 document.querySelectorAll('[data-motion]').forEach(b=>b.addEventListener('click',()=>trigger(b.dataset.motion)));
-$('reset-btn').addEventListener('click',()=>{bot.reset();$('speech').textContent=speech.idle;selectView('three')});
+$('reset-btn').addEventListener('click',()=>{debugPose=null;bot.reset();$('speech').textContent=speech.idle;selectView('three')});
+const slowBtn=$('slow-btn');
+if(slowBtn)slowBtn.addEventListener('click',()=>{
+  playbackRate=playbackRate===1?.5:1;
+  slowBtn.textContent=playbackRate===1?'Slow motion: off':'Slow motion: ×0.5';
+  slowBtn.classList.toggle('selected',playbackRate!==1);
+});
 $('solid-btn').addEventListener('click',()=>{
   bot.setHologram(false);$('solid-btn').classList.add('selected');$('holo-btn').classList.remove('selected')
 });
@@ -148,7 +163,8 @@ function animate(now){
     camera.position.copy(new THREE.Vector3().setFromSpherical(p).add(controls.target));
     if(camera.position.distanceTo(cameraTarget)<.015)cameraTarget=null;
   }
-  bot.update(now/1000,delta);
+  motionClock+=delta*playbackRate;
+  bot.update(debugPose?100+debugPose.seconds:motionClock,delta*playbackRate);
   controls.update();
   renderer.render(scene,camera);
 }
