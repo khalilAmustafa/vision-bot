@@ -6,6 +6,9 @@ Interactive, fully procedural 3D mascot for the VISION Entrepreneurship & Innova
 
 ## Status
 
+- **V5 connection pass:** unified skinned body for torso, both shoulders/arms and feet, generated with smooth-surface blending in `src/soft-body-v5.js`. Head remains an intentionally rigid separate assembly.
+- Body uses 7 bones (root, paired shoulders, wrists and feet); no visibly intersecting arm or leg meshes. Waving wrist motion has been revised to stay readable alongside the head.
+
 - **V3 reference-based model** published to `index.html`, with front/3/4/side/back view controls.
 - Designed from the approved charcoal, black, yellow and mint-green turnaround.
 - **V4 animation pass:** storyboard-timed Wave/Greet, subtle grounded Idle, gradual smile/eye morph, smooth overlap between head/body/arm and an optional ×0.5 motion review.
@@ -18,6 +21,7 @@ Interactive, fully procedural 3D mascot for the VISION Entrepreneurship & Innova
 
 - `src/mascot-v3.js` — scene graph, approved model geometry, morphing face texture and articulated motion
 - `src/motion-v4.js` — pure Idle/Wave animation curves with anticipation, deliberate beats and gentle recovery
+- `src/soft-body-v5.js` — one fused and skinned procedural body surface with soft joint weighting
 - `ANIMATION_SPEC.md` — acting storyboard and reference-based motion constraints
 - `src/main-v3.js` — viewer, lighting, camera orbit, interaction UI
 - `src/cv-v3.js` — optional camera and MediaPipe detection
@@ -39,4 +43,4 @@ The webcam feed is processed within your browser and is not stored by this app. 
 
 ## Limitations
 
-This is a **Three.js model study** with object-pivot animation, not a production Blender sculpt, deformable skeletal rig or animated GLB. It is an intentionally close procedural approximation to the locked concept image. Higher-grade squash/stretch, facial mesh deformation and exact topology require a later rigged-asset pass.
+This is a **Three.js model study** with object-pivot animation, not a production Blender sculpt, deformable skeletal rig or animated GLB. It is a procedural approximation to the locked concept image with a continuous skinned soft-body (added V5), not a hand-sculpted production asset or a Blender-authored GLB. Head/body separation is still intentional; exact production topology, silhouette accuracy and advanced facial deformation require a later artist-led rigging pass.
