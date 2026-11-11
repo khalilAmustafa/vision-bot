@@ -56,7 +56,9 @@ export function wavePose(t){
     sz:1+.021*windup-.006*lifted,
     headYaw:-.09*attention+.02*waves,
     headPitch:-.06*reaction + .026*settle,
-    headRoll:-.11*reaction +.025*settle,
+    // Opposite-handed acting: with the right arm raised (+X), the head
+    // leans to the character's left (-X). Positive Z rotation does that.
+    headRoll:+.13*reaction -.025*settle,
     // Positive local Z lifts its right arm out to the screen's right.
     armL:-.13-.065*reaction,
     armR:.13-.12*windup +2.18*lifted+.19*waves*swing,
