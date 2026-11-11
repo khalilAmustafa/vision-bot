@@ -3,10 +3,39 @@
 <script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.181.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.181.0/examples/jsm/"}}</script>
 <style>
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,Arial;background:#060e1b;color:#edf9ff}*{box-sizing:border-box}body{margin:0;min-height:100dvh;background:radial-gradient(ellipse at 52% 30%,#112e48 0,#09172a 48%,#060e1b 85%)}.top{display:flex;align-items:center;justify-content:space-between;padding:16px clamp(16px,4vw,42px);border-bottom:1px solid #ffffff16}.brand{font-size:clamp(24px,3vw,36px);font-weight:900;letter-spacing:-1.7px}.brand span{color:#51e5f7}.tag{color:#8fa9b9;font-size:10px;letter-spacing:2.2px}.pill{font-size:11px;color:#8fefff;border:1px solid #46d7ea55;border-radius:40px;padding:7px 12px}.page{max-width:1300px;margin:auto;padding:12px clamp(14px,3vw,30px) 26px;display:grid;grid-template-columns:minmax(0,1fr) 295px;gap:18px}.scene{position:relative;min-height:68vh;border:1px solid #4bd5f52a;border-radius:24px;overflow:hidden;background:radial-gradient(circle at 50% 57%,#12304833,transparent 55%),linear-gradient(180deg,#071325aa,#060d19aa)}.scene:after{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 40px,#7fd8ff06 41px 42px),repeating-linear-gradient(90deg,transparent 0 40px,#7fd8ff06 41px 42px)}#three{position:absolute;inset:0}.scene-title{position:absolute;z-index:2;top:22px;left:23px;font-size:11px;letter-spacing:2px;color:#a4c6d3}.speak{position:absolute;z-index:2;left:50%;transform:translateX(-50%);bottom:31px;max-width:90%;min-width:200px;text-align:center;border-radius:14px;background:#10263cde;border:1px solid #4fd7e15e;padding:13px 20px;font-size:clamp(14px,1.9vw,19px);box-shadow:0 10px 30px #0005}.hint{position:absolute;top:55px;left:23px;color:#83a7bb;font-size:12px;z-index:2}.panel{border:1px solid #446c824f;border-radius:20px;background:#0c1b2cbd;padding:20px;display:flex;flex-direction:column;gap:16px}.panel h2{font-size:12px;letter-spacing:2px;color:#84a6be;margin:0}.panel p{font-size:12px;line-height:1.7;color:#9eb8c9;margin:0}button{border:1px solid #3d6e80;background:#132c3e;color:#e8f6ff;border-radius:12px;padding:12px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}button:hover,button:focus-visible{background:#1b4051;border-color:#63e9f8}button.primary{background:#1a8394;border-color:#53e4ef;color:white}.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row{display:flex;gap:8px;flex-wrap:wrap}.row button{flex:1}.small{font-size:10px;color:#a4c3ce}.status{color:#7df4d8;font-size:12px}input[type=range]{width:100%;accent-color:#53e3f1}input[type=color]{width:100%;height:35px;border:0;background:transparent}.colors{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.colors label{font-size:10px;color:#9cbbc8}.foot{text-align:center;font-size:11px;color:#5e8498;margin:10px}.cam{position:absolute;top:20px;right:20px;width:115px;height:86px;border:1px solid #53deee5f;border-radius:10px;object-fit:cover;transform:scaleX(-1);z-index:3;display:none}.cam.on{display:block}.booth .panel,.booth .foot{display:none}.booth .page{display:block;max-width:none;padding:0}.booth .scene{border:0;border-radius:0;height:calc(100dvh - 72px);min-height:unset}.booth .hint{display:none}@media(max-width:780px){.page{grid-template-columns:1fr}.scene{min-height:58dvh}.panel{padding:16px}.top{padding:13px 17px}.pill{display:none}.page{gap:10px}.scene-title{top:16px}.speak{bottom:16px}}
+</style>
+<style id="art-direction-v2">
+:root{color-scheme:dark;font-family:Inter,ui-sans-serif,system-ui,sans-serif;background:#0b121c;color:#f1f1ec}
+body{background:radial-gradient(ellipse at 43% 35%,#162637 0%,#0d1824 35%,#0a111b 73%,#080d16 100%);color:#f1f1ec}
+.top{border-bottom:1px solid #ece9df15;padding:21px clamp(20px,4vw,56px);max-width:1400px;margin:auto}
+.brand{font-size:clamp(26px,3.4vw,39px);font-weight:830;letter-spacing:-2px;color:#f5f4eb}
+.brand span{color:#b8d6d0}
+.tag{letter-spacing:2.2px;font-size:9px;color:#8c9a9f;margin-top:2px}
+.pill{border:1px solid #e6e6dd25;color:#bac5c4;font-size:10px;letter-spacing:1.2px}
+.page{max-width:1400px;grid-template-columns:minmax(0,1fr) 315px;gap:20px;padding-top:23px}
+.scene{min-height:69vh;background:radial-gradient(ellipse at 53% 49%,#2c405060 0,#17273640 35%,transparent 66%),linear-gradient(145deg,#111e2b,#0a1520);border:1px solid #d9dedf22;border-radius:20px}
+.scene:after{background:linear-gradient(180deg,#0d182200 0%,#0d182210 60%,#0d182250 100%);border-radius:inherit}
+.scene-title{font-size:11px;letter-spacing:2.6px;color:#a9bac1;top:24px;left:27px}
+.hint{color:#738d9b;font-size:11px;top:52px;left:27px}
+.speak{background:#162533df;border:1px solid #bdccce34;box-shadow:0 12px 30px #050c184d;min-width:unset;max-width:80%;border-radius:11px;font-size:15px;font-weight:500;padding:13px 22px;bottom:29px}
+.panel{background:#121d2a94;border:1px solid #d9dedf23;border-radius:20px;padding:24px;gap:17px}
+.panel h2{font-size:10px;color:#8dacae;letter-spacing:2.5px;font-weight:800}
+.panel p{color:#a5b2ba;font-size:12px;line-height:1.75}
+button{border-radius:10px;border:1px solid #e8f2f025;background:#192736;color:#e1ede9;transition:background .16s,border-color .16s;color:#eaece9}
+button:hover,button:focus-visible{background:#273c46;border-color:#a6cbc4}
+button.primary{background:#b2cac0;color:#17252b;border-color:#c0d3c9;font-weight:750}
+button.primary:hover{background:#d7ebe0}
+.status{color:#9bd7c5}
+.colors label{color:#a3b8bc}
+.small{color:#829ba3}
+.foot{color:#769099}
+.cam{border-color:#8bd7cc88}
+.booth .scene{border-radius:0;border:0;height:calc(100dvh - 85px)}
+@media(max-width:780px){.top{padding:15px 20px}.page{grid-template-columns:1fr;padding:10px 12px 25px;gap:12px}.scene{min-height:60dvh}.panel{padding:20px}.scene-title{top:15px;left:18px}.hint{top:42px;left:18px}.speak{bottom:16px;font-size:13px}}
 </style></head>
 <body><header class="top"><div><div class="brand">VISI<span>O</span>N</div><div class="tag">ENTREPRENEURSHIP & INNOVATION CLUB</div></div><div class="pill">INTERACTIVE MASCOT · PROTOTYPE</div></header>
-<main class="page"><section class="scene"><div id="three"></div><div class="scene-title">VISION / MEET VEE</div><div class="hint">Drag to rotate the 3D character</div><video id="cam" class="cam" autoplay playsinline muted></video><div id="speech" class="speak">Hey! Welcome to VISION.</div></section>
-<aside class="panel"><h2>ANIMATION PLAYGROUND</h2><p>Live procedural 3D model — every component is code-editable. Try its reactions here, or enable the camera.</p><div class="actions"><button data-act="greet">Hello!</button><button data-act="wave">Wave</button><button data-act="happy">Happy</button><button data-act="curious">Curious</button><button data-act="thumbs">Thumbs Up</button><button data-act="surprised">Surprise</button></div><h2>APPEARANCE</h2><div class="colors"><label>Shell<input id="shell" type="color" value="#eee8dd"></label><label>Accent<input id="accent" type="color" value="#a7b487"></label><label>Eyes<input id="eyes" type="color" value="#5de9ff"></label></div><div class="row"><button id="solid">Solid</button><button id="holo">Holographic</button></div><h2>CAMERA / CV</h2><button id="cameraBtn" class="primary">Enable camera tracking</button><div id="status" class="status">Manual mode · camera off</div><p>Face tracking turns the head toward visitors. Open palm → wave; thumbs-up → happy; victory → excited. No video is uploaded or saved.</p><div class="row"><button id="booth">Fullscreen booth mode</button><button id="reset">Reset pose</button></div><p class="small">Camera works over HTTPS after permission. If model downloads fail, manual controls remain available.</p></aside></main><div class="foot">VISION CLUB • Interactive booth prototype • Three.js + MediaPipe</div>
+<main class="page"><section class="scene"><div id="three"></div><div class="scene-title">VISION / COMPANION 01</div><div class="hint">Drag to rotate the 3D character</div><video id="cam" class="cam" autoplay playsinline muted></video><div id="speech" class="speak">Hey! Welcome to VISION.</div></section>
+<aside class="panel"><h2>ANIMATION PLAYGROUND</h2><p>An original companion robot inspired by soft industrial design. Test expressions and gestures, or enable the camera.</p><div class="actions"><button data-act="greet">Hello!</button><button data-act="wave">Wave</button><button data-act="happy">Happy</button><button data-act="curious">Curious</button><button data-act="thumbs">Thumbs Up</button><button data-act="surprised">Surprise</button></div><h2>APPEARANCE</h2><div class="colors"><label>Shell<input id="shell" type="color" value="#f1ede5"></label><label>Accent<input id="accent" type="color" value="#9faf98"></label><label>Eyes<input id="eyes" type="color" value="#77e9f1"></label></div><div class="row"><button id="solid">Solid</button><button id="holo">Holographic</button></div><h2>CAMERA / CV</h2><button id="cameraBtn" class="primary">Enable camera tracking</button><div id="status" class="status">Manual mode · camera off</div><p>Face tracking turns the head toward visitors. Open palm → wave; thumbs-up → happy; victory → excited. No video is uploaded or saved.</p><div class="row"><button id="booth">Fullscreen booth mode</button><button id="reset">Reset pose</button></div><p class="small">Camera works over HTTPS after permission. If model downloads fail, manual controls remain available.</p></aside></main><div class="foot">VISION CLUB • Interactive booth prototype • Three.js + MediaPipe</div>
 <script type="module">
 import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
@@ -80,14 +109,38 @@ torus.rotation.x=Math.PI/2;
 const softGround=new T.Mesh(new T.CircleGeometry(1.6,64),new T.MeshBasicMaterial({color:'#3285a1',transparent:true,opacity:.095,depthWrite:false,side:T.DoubleSide}));
 softGround.rotation.x=-Math.PI/2;softGround.position.y=-1.87;scene.add(softGround);
 let expression='neutral',blink=0,gazeX=0,gazeY=0;
-function drawFace(){ctx.clearRect(0,0,512,304);ctx.fillStyle=$('eyes').value;ctx.strokeStyle=$('eyes').value;ctx.lineCap='round';ctx.lineJoin='round';ctx.shadowColor=$('eyes').value;ctx.shadowBlur=20;let xs=[178+gazeX*17,334+gazeX*17],yy=gazeY*12;
-for(const x of xs){ctx.beginPath();
-if(blink>0.6){ctx.lineWidth=16;ctx.moveTo(x-26,152+yy);ctx.lineTo(x+26,152+yy);ctx.stroke()}
-else if(['happy','thumbs','wave','greet'].includes(expression)){ctx.lineWidth=21;ctx.moveTo(x-28,162+yy);ctx.lineTo(x,133+yy);ctx.lineTo(x+28,162+yy);ctx.stroke()}
-else if(expression==='surprised'){ctx.arc(x,153+yy,22,0,Math.PI*2);ctx.fill()}
-else if(expression==='curious'){ctx.arc(x,150+yy,xs[0]===x?16:26,0,Math.PI*2);ctx.fill()}
-else{ctx.roundRect(x-17,110+yy,34,91,16);ctx.fill()}}
-faceTex.needsUpdate=true}
+function drawFace(){
+  const c=ctx;c.clearRect(0,0,512,304);
+  const cyan=$('eyes').value;
+  const xShift=gazeX*12,yShift=-gazeY*8;
+  const eyes=[170+xShift,342+xShift];
+  c.fillStyle=cyan;c.strokeStyle=cyan;c.shadowColor=cyan;c.shadowBlur=11;
+  c.lineCap='round';c.lineJoin='round';
+  function line(x1,y1,x2,y2,width=11){c.lineWidth=width;c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()}
+  for(let i=0;i<2;i++){
+    const x=eyes[i],y=146+yShift;
+    if(blink>.5||expression==='sleep'){line(x-22,y,x+22,y,12);continue}
+    if(['happy','wave','greet'].includes(expression)){
+      c.lineWidth=20;c.beginPath();c.moveTo(x-31,y+13);c.quadraticCurveTo(x,y-35,x+31,y+13);c.stroke();continue
+    }
+    if(expression==='thumbs'&&i===0){line(x-24,y,x+24,y,14);continue}
+    if(expression==='surprised'){c.lineWidth=14;c.beginPath();c.ellipse(x,y,21,28,0,0,Math.PI*2);c.stroke();continue}
+    if(expression==='curious'&&i===0){c.lineWidth=14;c.beginPath();c.arc(x,y,17,0,Math.PI*2);c.stroke();continue}
+    if(expression==='excited'){
+      c.lineWidth=19;c.beginPath();c.moveTo(x-26,y-20);c.lineTo(x+24,y+6);c.lineTo(x-26,y+24);c.stroke();continue
+    }
+    c.beginPath();c.roundRect(x-17,y-43,34,86,16);c.fill();
+    c.shadowBlur=0;c.fillStyle='#f8ffff';c.globalAlpha=.52;
+    c.beginPath();c.roundRect(x-10,y-32,7,21,4);c.fill();
+    c.globalAlpha=1;c.fillStyle=cyan;c.shadowBlur=11;
+  }
+  c.shadowBlur=0;
+  if(['happy','wave','greet','thumbs'].includes(expression)){
+    c.strokeStyle=cyan;c.lineWidth=9;c.beginPath();c.arc(256,188,23,.14,Math.PI-.14);c.stroke();
+  }
+  if(expression==='surprised'){c.fillStyle=cyan;c.beginPath();c.ellipse(256,208,8,12,0,0,Math.PI*2);c.fill()}
+  faceTex.needsUpdate=true;
+}
 drawFace();
 let action='',start=0,duration=0,followX=0,followY=0,holo=false;
 function speak(msg){$('speech').textContent=msg}
