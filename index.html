@@ -78,13 +78,13 @@ function setHolo(v){holo=v;mat.shell.transparent=v;mat.shell.opacity=v?.43:1;mat
 function resize(){const r=stage.getBoundingClientRect();renderer.setSize(Math.max(1,r.width),Math.max(1,r.height),false);camera.aspect=r.width/Math.max(1,r.height);camera.updateProjectionMatrix()}
 new ResizeObserver(resize).observe(stage);resize(); 
 let lastBlink=0;const clock=new T.Clock();
-function animate(){requestAnimationFrame(animate);const t=clock.getElapsedTime();if(t-lastBlink>3.6){blink=1;drawFace();lastBlink=t;setTimeout(()=>{blink=0;drawFace()},140)}
+function animate(){requestAnimationFrame(animate);const t=performance.now()/1000;if(t-lastBlink>3.6){blink=1;drawFace();lastBlink=t;setTimeout(()=>{blink=0;drawFace()},140)}
 if(action&&t-start>duration){action='';expression='neutral';drawFace()}
 const p=action?Math.max(0,Math.min(1,(t-start)/duration)):0,swing=Math.sin(p*Math.PI*5);
 body.position.y=Math.sin(t*1.6)*.065;body.rotation.z=Math.sin(t*.85)*.025;
 head.rotation.y+=((followX*.48+(action==='curious'?.16:0))-head.rotation.y)*.05;head.rotation.x+=((-followY*.20)-head.rotation.x)*.05;
 head.rotation.z+=(((action==='curious'?.17:action==='happy'?.09:0))-head.rotation.z)*.07;
-for(const [side,a] of Object.entries(arms)){let active=side==='right'&&['wave','greet','thumbs'].includes(action);let target=active?-2.35:(action==='surprised'?-1.05:-.15);a.shoulder.rotation.z+=( (side==='right'?-target:target)-a.shoulder.rotation.z)*.16;a.shoulder.rotation.x+=(active?-.25:0-a.shoulder.rotation.x)*.04;a.elbow.rotation.z+=((active?-.72:0)-a.elbow.rotation.z)*.14;a.hand.rotation.z+=((active&&action!=='thumbs'?swing*.55:0)-a.hand.rotation.z)*.25;}
+for(const [side,a] of Object.entries(arms)){let active=side==='right'&&['wave','greet','thumbs'].includes(action);let target=active?-2.35:(action==='surprised'?-1.05:-.15);a.shoulder.rotation.z+=( (side==='right'?-target:target)-a.shoulder.rotation.z)*.16;a.shoulder.rotation.x+=((active?-.25:0)-a.shoulder.rotation.x)*.04;a.elbow.rotation.z+=((active?-.72:0)-a.elbow.rotation.z)*.14;a.hand.rotation.z+=((active&&action!=='thumbs'?swing*.55:0)-a.hand.rotation.z)*.25;}
 cube.rotation.y+=.015;cube.position.y=Math.sin(t*2)*.11;torus.rotation.z+=.004;orbit.update();renderer.render(scene,camera)}animate();
 let cv=null,stream=null,interval=null,lastPresent=false,lastSeen=0,lastGesture='',streak=0,gestureAt=0;
 $('cameraBtn').onclick=async()=>{
