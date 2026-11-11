@@ -48,11 +48,11 @@ export function createCurvedArm(parent,material,sign){
     // At idle, arm hangs alongside torso. During wave it steps OUT before UP.
     const sx=shoulder.x||0,sy=shoulder.y||0,sz=shoulder.z||0;
     p0.set(sign*.43+sx,-.28+sy,.055+sz);
-    p1.set(sign*lerp(.57,.81,lift)+sx,lerp(-.405,-.36,lift)+sy,lerp(.125,.30,lift)+sz);
-    p2.set(sign*lerp(.745,1.065,lift)+sx,lerp(-.66,-.27,lift)+sy,lerp(.16,.56,lift)+sz);
-    p3.set(sign*(lerp(.775,1.21,lift)+.026*wave*lift)+sx,
-      lerp(-.84,.115,lift)+.028*wave*lift+sy,
-      lerp(.155,.78,lift)+.045*front+sz);
+    p1.set(sign*lerp(.57,.98,lift)+sx,lerp(-.405,-.36,lift)+sy,lerp(.125,.20,lift)+sz);
+    p2.set(sign*lerp(.745,1.17,lift)+sx,lerp(-.66,-.27,lift)+sy,lerp(.16,.30,lift)+sz);
+    p3.set(sign*(lerp(.775,1.26,lift)+.026*wave*lift)+sx,
+      lerp(-.84,.10,lift)+.028*wave*lift+sy,
+      lerp(.155,.36,lift)+.07*front+sz);
 
     for(let i=0;i<=N;i++){
       const t=i/N;
