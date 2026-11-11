@@ -54,6 +54,12 @@ const neutral=arms[0];
 if(neutral.rightTip && (neutral.rightTip[0]>.90||neutral.rightTip[1]>-.68))failures.push({name:'rest-arm-proportions-wrong',neutral});
 if(arms.some(p=>Math.abs(p.shoulderX-.515)>.08||Math.abs(p.shoulderY+.29)>.08))failures.push({name:'shoulder-detaches-from-torso',arms});
 if(seqErrors.length)failures.push({name:'wave-sequence-errors',errors:seqErrors});
+// Clearance check also needs the side silhouette — front-only checks can miss depth clipping.
+await seq.locator('[data-view=side]').click();
+await seq.waitForTimeout(1200);
+await seq.evaluate(()=>window.__VISION_MOTION_REVIEW__.pose('wave',1.70));
+await seq.waitForTimeout(550);
+await seq.locator('#stage').screenshot({path:'review-artifacts/wave-side-peak.png'});
 await seq.close();
 await browser.close();
 if(failures.length){console.error('VISUAL SMOKE FAIL',JSON.stringify(failures));process.exit(1)}
