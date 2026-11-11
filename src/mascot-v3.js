@@ -38,7 +38,7 @@ function capsuleBetween(a,b,r,material,parent){
 function createShadow(){
   const c=document.createElement('canvas');c.width=256;c.height=256;
   const x=c.getContext('2d'),g=x.createRadialGradient(128,128,6,128,128,124);
-  g.addColorStop(0,'rgba(18,21,24,0.38)');g.addColorStop(.35,'rgba(20,24,28,0.23)');
+  g.addColorStop(0,'rgba(18,21,24,0.48)');g.addColorStop(.35,'rgba(20,24,28,0.30)');
   g.addColorStop(.7,'rgba(20,24,28,0.06)');g.addColorStop(1,'rgba(20,24,28,0)');
   x.fillStyle=g;x.fillRect(0,0,256,256);
   const m=new THREE.Mesh(new THREE.PlaneGeometry(4.1,2.8),new THREE.MeshBasicMaterial({
@@ -62,14 +62,14 @@ export class VisionMascot {
     const dark=mat('#26292c',{roughness:.55});
     const black=mat('#0b0c0d',{roughness:.1,clearcoat:1,clearcoatRoughness:.12});
     const glass=mat(C.visor,{roughness:.11,metalness:.03,clearcoat:1,clearcoatRoughness:.065});
-    const green= new THREE.MeshBasicMaterial({color:C.sage});
-    const yellow=new THREE.MeshBasicMaterial({color:C.yellow});
+    const green= new THREE.MeshBasicMaterial({color:C.sage,toneMapped:false});
+    const yellow=new THREE.MeshBasicMaterial({color:C.yellow,toneMapped:false});
     this.materials={shell,body,trim,dark,black,glass,green,yellow};
     const whole=new THREE.Group();this.root.add(whole);this.parts.whole=whole;
     const neck=egg(.22,.14,.25,dark,whole,[0,-.105,0]);neck.name='neck';
     const head=new THREE.Group();head.position.set(0,-.08,0);whole.add(head);this.parts.head=head;
     // The center of the head lies 0.70 units above its neck pivot.
-    rounded(2.16,1.65,1.18,.5,shell,head,[0,.76,0]).name='head_shell';
+    rounded(2.16,1.65,1.40,.5,shell,head,[0,.76,0]).name='head_shell';
     // Slightly proud rim and an inset glossy visor, with a continuous silhouette.
     softPanel(1.82,1.31,.35,.09,trim,head,[0,.72,.592],.045).name='screen_bezel';
     softPanel(1.72,1.21,.32,.034,black,head,[0,.72,.713],.024).name='screen_seal';
@@ -81,12 +81,12 @@ export class VisionMascot {
     faceTexture.anisotropy=8;
     this.texture=faceTexture;
     this.facePlane=mesh(new THREE.PlaneGeometry(1.48,1.01),
-      new THREE.MeshBasicMaterial({map:faceTexture,transparent:true,depthWrite:false,opacity:1}),
+      new THREE.MeshBasicMaterial({map:faceTexture,transparent:true,depthWrite:false,opacity:1,toneMapped:false}),
       head,[0,.73,.826]);
     // Two little spherical antennae, exactly matching the approved reference.
     for(const s of [-1,1]){
-      egg(.075,.12,.075,dark,head,[s*.56,1.63,-.13]);
-      egg(.125,.125,.125,shell,head,[s*.56,1.73,-.13]);
+      egg(.075,.12,.075,dark,head,[s*.56,1.58,-.13]);
+      egg(.125,.125,.125,shell,head,[s*.56,1.65,-.13]);
       // Each side gets the same green indicator, facing OUTWARD on the pad.
       const ear=rounded(.19,.56,.53,.087,trim,head,[s*1.107,.74,-.045]);
       ear.name=s<0?'left_indicator_pad':'right_indicator_pad';
@@ -95,8 +95,8 @@ export class VisionMascot {
     }
     // Tapered soft torso, one smoothly connected organic volume.
     const coords=[
-      [0,-1.06],[.26,-1.06],[.53,-.985],[.66,-.85],[.69,-.68],
-      [.68,-.50],[.61,-.32],[.47,-.195],[.28,-.15],[0,-.15]
+      [0,-1.10],[.34,-1.10],[.56,-1.065],[.66,-.98],[.68,-.83],
+      [.64,-.59],[.55,-.37],[.44,-.22],[.28,-.18],[0,-.18]
     ];
     const curve=new THREE.SplineCurve(coords.map(([r,y])=>new THREE.Vector2(r,y)));
     const torso=mesh(new THREE.LatheGeometry(curve.getPoints(54),72),body,whole);
@@ -108,10 +108,10 @@ export class VisionMascot {
     // Rounded mitten arms. They are single deformable-looking shapes with true shoulder pivots.
     for(const sign of [-1,1]){
       const a=new THREE.Group();
-      a.position.set(sign*.585,-.345,.012);
+      a.position.set(sign*.615,-.355,.055);
       whole.add(a);a.rotation.z=-sign*.18;
-      egg(.20,.23,.20,dark,a,[sign*.025,-.08,0]);
-      const hand=egg(.205,.38,.215,body,a,[sign*.145,-.405,.02]);
+      egg(.158,.195,.16,body,a,[sign*.025,-.11,0]);
+      const hand=egg(.19,.355,.198,body,a,[sign*.12,-.385,.02]);
       hand.rotation.z=sign*.24;
       a.name=sign<0?'LeftArm_Pivot':'RightArm_Pivot';
       this.parts[sign<0?'left':'right']=a;
@@ -119,7 +119,7 @@ export class VisionMascot {
     // Short, thick feet; the character is grounded, not hovering.
     for(const sign of [-1,1]){
       const leg=new THREE.Group();leg.position.set(sign*.295,-1.005,.01);whole.add(leg);
-      egg(.285,.343,.31,body,leg,[0,-.265,.095]);leg.name=sign<0?'leftFoot':'rightFoot';
+      egg(.28,.36,.30,body,leg,[0,-.27,.075]);leg.name=sign<0?'leftFoot':'rightFoot';
       this.parts[sign<0?'legL':'legR']=leg;
     }
     this.shadow=createShadow();this.scene.add(this.shadow);
@@ -168,7 +168,7 @@ export class VisionMascot {
       }else if(type==='sad'){
         c.lineWidth=33;c.moveTo(x-50,y-12);c.quadraticCurveTo(x,y+36,x+50,y-12);c.stroke();
       }else{
-        c.ellipse(x,y,53,75,0,0,Math.PI*2);c.fill();
+        c.ellipse(x,y,64,73,0,0,Math.PI*2);c.fill();
       }
     }
     c.beginPath();
@@ -180,9 +180,9 @@ export class VisionMascot {
       c.lineWidth=20;c.moveTo(474,476);c.lineTo(550,476);c.stroke();
     }else{
       // Rounded crescent smile matches the approved face rather than a generic emoticon.
-      c.moveTo(449,442);c.quadraticCurveTo(512,464,575,442);
-      c.quadraticCurveTo(567,524,512,524);
-      c.quadraticCurveTo(457,524,449,442);c.closePath();c.fill();
+      c.moveTo(423,442);c.quadraticCurveTo(512,462,601,442);
+      c.quadraticCurveTo(583,530,512,530);
+      c.quadraticCurveTo(441,530,423,442);c.closePath();c.fill();
     }
     c.restore();this.texture.needsUpdate=true;
   }
