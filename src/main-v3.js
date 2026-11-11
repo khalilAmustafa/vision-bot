@@ -43,7 +43,7 @@ let debugPose=null;
 window.__VISION_MOTION_REVIEW__={
   pose(name,seconds){debugPose={name,seconds};introDone=true;bot.active={name,start:100,duration:name==='wave'||name==='greet'?3.65:2.2};bot.expression=name==='greet'?'wave':name;},
   resume(){debugPose=null;bot.reset()},
-  status(){return {clip:bot.active?.name||'idle',camera:!!vision?.running,rate:playbackRate}}
+  status(){return {clip:bot.active?.name||'idle',camera:!!vision?.running,rate:playbackRate,rightArm:bot.parts.right.rotation.z,headTilt:bot.parts.head.rotation.z}}
 };
 let cameraTarget=null;
 const views={
