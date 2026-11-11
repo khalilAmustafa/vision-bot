@@ -31,7 +31,7 @@ export function idlePose(t){
     armR: .13 + .016*Math.sin(TAU*t/5.1+.3),
     armFrontL:0,armFrontR:0,
     shoulderOffsetX:0,shoulderOffsetY:0,shoulderOffsetZ:0,
-    wristWave:0,
+    wristWave:0,armStretch:0,
     feet:0,
     happy:0,
     eyebrow:0
@@ -62,10 +62,12 @@ export function wavePose(t){
     armR:.13-.12*windup +2.18*lifted+.075*waves*swing,
     armFrontL:.05*reaction,
     armFrontR:.34*lifted,
-    shoulderOffsetX:.15*lifted,
-    shoulderOffsetY:.12*lifted,
-    shoulderOffsetZ:.29*lifted,
-    wristWave:.22*waves*swing,
+    // The shoulder must stay physically attached to the torso. No floating hand.
+    shoulderOffsetX:.015*lifted,
+    shoulderOffsetY:.012*lifted,
+    shoulderOffsetZ:.075*lifted,
+    wristWave:.24*waves*swing,
+    armStretch:.16*lifted,
     feet:0,
     happy:pulse(t,.53,.86,2.78,3.20),
     eyebrow:reaction
@@ -77,7 +79,7 @@ export function otherPose(name,t,duration){
   const p={
     y:0,lean:0,bodyPitch:0,sx:1,sy:1,sz:1,headYaw:0,headPitch:0,headRoll:0,
     armL:-.13,armR:.13,armFrontL:0,armFrontR:0,shoulderOffsetX:0,
-    shoulderOffsetY:0,shoulderOffsetZ:0,wristWave:0,feet:0,happy:0,eyebrow:0
+    shoulderOffsetY:0,shoulderOffsetZ:0,wristWave:0,armStretch:0,feet:0,happy:0,eyebrow:0
   };
   if(name==='happy'){
     const jump=Math.max(0,Math.sin(u*Math.PI*2));
