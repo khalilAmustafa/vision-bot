@@ -2,7 +2,6 @@
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
 import {CLIP_DURATION, evaluatePose, blinkAmount} from './motion-v4.js';
-import {createSoftBody} from './soft-body-v5.js';
 
 const C = { charcoal:'#3b3e42', visor:'#0e0e0e', yellow:'#ffd84d', sage:'#a8c7a6' };
 const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
@@ -68,7 +67,7 @@ export class VisionMascot {
     const yellow=new THREE.MeshBasicMaterial({color:C.yellow,toneMapped:false});
     this.materials={shell,body,trim,dark,black,glass,green,yellow};
     const whole=new THREE.Group();this.root.add(whole);this.parts.whole=whole;
-    // The fused upper chest extends under the head; no exposed dark neck ball.
+    const neck=egg(.22,.14,.25,dark,whole,[0,-.105,0]);neck.name='neck';
     const head=new THREE.Group();head.position.set(0,-.08,0);whole.add(head);this.parts.head=head;
     // The center of the head lies 0.70 units above its neck pivot.
     rounded(2.16,1.65,1.40,.5,shell,head,[0,.76,0]).name='head_shell';
@@ -95,25 +94,36 @@ export class VisionMascot {
       const strip=rounded(.034,.282,.095,.015,green,head,[s*1.218,.745,-.045]);
       strip.name=s<0?'left_mint_strip':'right_mint_strip';
     }
-    // A single skinned surface replaces the prior intersecting lathed body,
-    // disjoint mitten spheres and feet. Shoulders and hip transitions are
-    // blended in the rest mesh, then bend continuously with the same skin.
-    const soft=createSoftBody(whole,body);
-    this.parts.torso=soft.skin;
-    this.parts.left=soft.left;
-    this.parts.right=soft.right;
-    this.parts.leftFlipper=soft.leftFlipper;
-    this.parts.rightFlipper=soft.rightFlipper;
-    this.parts.legL=soft.legL;
-    this.parts.legR=soft.legR;
-    this.parts.skin=soft.skin;
-    this.meshVertexCount=soft.vertexCount;
-
-    // Mint V mark remains on the *chest*, not the neck or legs.
+    // Tapered soft torso, one smoothly connected organic volume.
+    const coords=[
+      [0,-1.10],[.34,-1.10],[.56,-1.065],[.66,-.98],[.68,-.83],
+      [.64,-.59],[.55,-.37],[.44,-.22],[.28,-.18],[0,-.18]
+    ];
+    const curve=new THREE.SplineCurve(coords.map(([r,y])=>new THREE.Vector2(r,y)));
+    const torso=mesh(new THREE.LatheGeometry(curve.getPoints(54),72),body,whole);
+    torso.scale.z=.79;torso.name='torso';this.parts.torso=torso;
+    // Mint V mark follows the chest rather than being an arbitrary neon badge.
     const v=new THREE.Group();whole.add(v);this.parts.logo=v;
-    capsuleBetween([-.12,-.52,.527],[0,-.69,.535],.03,green,v);
-    capsuleBetween([0,-.69,.535],[.12,-.52,.527],.03,green,v);
-
+    capsuleBetween([-.12,-.52,.524],[0,-.69,.536],.03,green,v);
+    capsuleBetween([0,-.69,.536],[.12,-.52,.524],.03,green,v);
+    // Rounded mitten arms. They are single deformable-looking shapes with true shoulder pivots.
+    for(const sign of [-1,1]){
+      const a=new THREE.Group();
+      a.position.set(sign*.615,-.355,.055);
+      whole.add(a);a.rotation.z=-sign*.18;
+      // No separate ball joint: the arm silhouette flows into the torso.
+      const hand=egg(.19,.355,.198,body,a,[sign*.12,-.385,.02]);
+      hand.rotation.z=sign*.24;
+      this.parts[sign<0?'leftFlipper':'rightFlipper']=hand;
+      a.name=sign<0?'LeftArm_Pivot':'RightArm_Pivot';
+      this.parts[sign<0?'left':'right']=a;
+    }
+    // Short, thick feet; the character is grounded, not hovering.
+    for(const sign of [-1,1]){
+      const leg=new THREE.Group();leg.position.set(sign*.295,-1.005,.01);whole.add(leg);
+      rounded(.54,.68,.58,.25,body,leg,[0,-.28,.075]);leg.name=sign<0?'leftFoot':'rightFoot';
+      this.parts[sign<0?'legL':'legR']=leg;
+    }
     this.shadow=createShadow();this.scene.add(this.shadow);
     this.applyFace();
   }
@@ -238,16 +248,9 @@ export class VisionMascot {
     r.position.x=damp(r.position.x,.615+pose.shoulderOffsetX,10);
     r.position.y=damp(r.position.y,-.355+pose.shoulderOffsetY,10);
     r.position.z=damp(r.position.z,.055+pose.shoulderOffsetZ,10);
-    this.parts.leftFlipper.rotation.z=damp(this.parts.leftFlipper.rotation.z,0,10);
-    this.parts.rightFlipper.rotation.z=damp(this.parts.rightFlipper.rotation.z,pose.wristWave,15);
-    // Hand arc stays beyond the face silhouette. Unlike moving the shoulder,
-    // a weighted wrist translation stretches the SAME connected skin surface.
-    const lift=Math.max(0,Math.min(1,pose.armStretch/.16));
-    const wrist=this.parts.rightFlipper;
-    wrist.position.x=damp(wrist.position.x,.12-.14*lift,11);
-    wrist.position.y=damp(wrist.position.y,-.43-.21*lift,11);
-    wrist.position.z=damp(wrist.position.z,.22*lift,11);
-    wrist.scale.y=damp(wrist.scale.y,1+pose.armStretch*.38,10);
+    this.parts.leftFlipper.rotation.z=damp(this.parts.leftFlipper.rotation.z,-.24,10);
+    this.parts.rightFlipper.rotation.z=damp(this.parts.rightFlipper.rotation.z,.24+pose.wristWave,15);
+    this.parts.rightFlipper.scale.y=damp(this.parts.rightFlipper.scale.y,.355*(1+pose.armStretch),10);
     this.parts.legL.rotation.x=damp(this.parts.legL.rotation.x,pose.feet,9);
     this.parts.legR.rotation.x=damp(this.parts.legR.rotation.x,-pose.feet,9);
     // Blinks have eyelid opening/closing rather than a one-frame disappearance.
