@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'src/*-v3.js'
+      - 'src/motion-v4.js'
       - 'src/style-v3.css'
       - 'index-v3-preview.html'
       - 'tools/visual-review.mjs'
