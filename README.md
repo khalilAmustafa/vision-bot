@@ -1,35 +1,39 @@
-# VISION Club — Interactive Mascot
+# VISION Club — Interactive Mascot (Three.js)
 
-A mobile-friendly Three.js prototype for the VISION Entrepreneurship & Innovation Club booth at ASU.
+**Live demo:** https://khalilamustafa.github.io/vision-bot/
 
-## Preview
+Interactive, fully procedural 3D mascot for the VISION Entrepreneurship & Innovation Club booth at Applied Science Private University.
 
-https://khalilamustafa.github.io/vision-bot/
+## Status
 
-## Art direction (v2)
+- **V3 reference-based model** published to `index.html`, with front/3/4/side/back view controls.
+- Designed from the approved charcoal, black, yellow and mint-green turnaround.
+- Smooth, coded animation tests: idle, wave, happy, curious, surprised, point, sleep.
+- Manual controls on mobile and desktop, optional face and hand tracking from MediaPipe.
+- Solid shading by default; optional experimental hologram effect.
+- No build step; GitHub Pages deploys static files automatically on pushes to `main`.
 
-A compact, original companion robot inspired by clean soft-body industrial design, expressive desktop robots, and the user's reference sketches. This is **not** an Eilik model or a licensed third-party asset.
+## Files
 
-Changes from the first prototype:
-- Soft egg-shaped torso and continuous rounded head instead of assembled boxes
-- Broad mechanical flipper arms for greeting and waving
-- Larger expressive visor with readable eyes and mouth
-- Removed floating cube, headphone discs and oversized projection effects
-- Neutral cream and sage materials, controlled cyan accents and studio lighting
-- Cleaner navy booth presentation
+- `src/mascot-v3.js` — scene graph, model geometry, face texture, procedural animation rig
+- `src/main-v3.js` — viewer, lighting, camera orbit, interaction UI
+- `src/cv-v3.js` — optional camera and MediaPipe detection
+- `src/style-v3.css` — responsive studio UI
+- `REFERENCE_SPEC.md` — locked design proportions, materials and acceptance checks
+- `tools/visual-review.mjs` — browser screenshot smoke tests in GitHub Actions
+- `index-v3-preview.html` — same current studio as a direct preview file
+- `legacy-v2.html` — previous robot design preserved
 
-## Interactions
+## Try it
 
-Manual controls: Greeting, Wave, Happy, Curious, Thumbs Up, Surprise, appearance colors, solid/holographic modes, orbit camera, fullscreen booth mode.
+Visit the live demo on phone or desktop. Drag to turn, select camera view, trigger a reaction, or enable webcam (requires HTTPS and permission). Press **Booth mode** to expand the experience.
 
-Optional webcam computer vision: MediaPipe face detection (head-following) and gesture recognition (open palm, thumbs-up, victory). Video is processed in the browser; no recording or server-side inference.
+The webcam feed is processed within your browser and is not stored by this app. External JS and MediaPipe models are downloaded from CDNs when needed.
 
-## Implementation
+## Visual QA
 
-Static `index.html` using CDN-imported Three.js and dynamically loaded MediaPipe models. There is no build step, and GitHub Pages deploys via `.github/workflows/pages.yml` on pushes to `main`.
+`.github/workflows/visual-review.yml` boots the page in a real Chrome browser via Playwright, captures desktop and mobile views, and fails on JavaScript page errors. The QA artifacts contain front, 3/4, side, back, wave and mobile screenshots. **Camera tracking itself is not tested in CI** and should be validated with booth lighting.
 
-**Limitations:** Internet is needed for CDN/model loading. Webcam requires HTTPS permission. Runtime appearance and CV reliability need checking on a real browser and the intended booth computer.
+## Limitations
 
-## Deployment
-
-Open **Settings → Pages**, set source to **GitHub Actions**, and inspect the **Actions** tab for deployment status.
+This is a **Three.js model study** with object-pivot animation, not a production Blender sculpt, deformable skeletal rig or animated GLB. It is an intentionally close procedural approximation to the locked concept image. Higher-grade squash/stretch, facial mesh deformation and exact topology require a later rigged-asset pass.
