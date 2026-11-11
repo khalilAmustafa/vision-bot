@@ -31,9 +31,9 @@ The following coordinates are initial targets and require multi-view review:
 |---|---|---|
 | Right shoulder (hidden) | (0.515, −0.29, 0.06) | fixed, may translate ≤0.02 |
 | Right arm buried root | (0.43, −0.28, 0.055) | anchored to torso |
-| Right upper bend guide | (0.57, −0.405, 0.125) | (0.81, −0.36, 0.20) |
-| Right outer bend guide | (0.745, −0.66, 0.16) | (1.065, −0.27, 0.28) |
-| Right rounded tip | (0.775, −0.84, 0.155) | (1.21, 0.115, 0.31) |
+| Right upper bend guide | (0.57, −0.405, 0.125) | (0.98, −0.36, 0.20) |
+| Right outer bend guide | (0.745, −0.66, 0.16) | (1.17, −0.27, 0.30) |
+| Right rounded tip | (0.775, −0.84, 0.155) | (1.26, 0.10, 0.36) |
 | Left shoulder and arm | mirror X | mirror X when left-wave is added |
 | Hip centers | X ±0.295, Y approximately −1.01 | no significant translation |
 
@@ -52,3 +52,6 @@ The arm is a separately shaded **continuous capsule** with its root embedded in 
 ## Scope and validation
 
 V6 is a sandbox preview served at `index-v6-preview.html`, with model in `src/mascot-v6.js`, dynamic arm geometry in `src/curve-arm-v6.js`, and a separate Playwright visual review. **Do not switch `index.html` to V6 until reference comparison and human review approve all views and motion.**
+
+## Side-view review note
+The first V6 wave looked too close to the lower head in profile. Driving the entire hand far forward in Z made it resemble a long pet flipper. That version was rejected. The corrected experiment moves the arm farther **laterally** (X) and keeps wave depth near the original reference, accepting a small hidden intersection at the buried shoulder only. Front and side screenshots are required before promotion.
