@@ -79,5 +79,5 @@ export function createCurvedArm(parent,material,sign){
     geometry.computeVertexNormals();
   }
   update(0);
-  return {mesh,update,geometry};
+  return {mesh,update,geometry,getState(){return {root:p0.toArray(),tip:p3.toArray(),vertices:(N+1)*R}}};
 }
