@@ -240,7 +240,14 @@ export class VisionMascot {
     r.position.z=damp(r.position.z,.055+pose.shoulderOffsetZ,10);
     this.parts.leftFlipper.rotation.z=damp(this.parts.leftFlipper.rotation.z,0,10);
     this.parts.rightFlipper.rotation.z=damp(this.parts.rightFlipper.rotation.z,pose.wristWave,15);
-    this.parts.rightFlipper.scale.y=damp(this.parts.rightFlipper.scale.y,1+pose.armStretch*.6,10);
+    // Hand arc stays beyond the face silhouette. Unlike moving the shoulder,
+    // a weighted wrist translation stretches the SAME connected skin surface.
+    const lift=Math.max(0,Math.min(1,pose.armStretch/.16));
+    const wrist=this.parts.rightFlipper;
+    wrist.position.x=damp(wrist.position.x,.12-.14*lift,11);
+    wrist.position.y=damp(wrist.position.y,-.43-.21*lift,11);
+    wrist.position.z=damp(wrist.position.z,.22*lift,11);
+    wrist.scale.y=damp(wrist.scale.y,1+pose.armStretch*.38,10);
     this.parts.legL.rotation.x=damp(this.parts.legL.rotation.x,pose.feet,9);
     this.parts.legR.rotation.x=damp(this.parts.legR.rotation.x,-pose.feet,9);
     // Blinks have eyelid opening/closing rather than a one-frame disappearance.
