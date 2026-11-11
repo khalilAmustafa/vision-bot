@@ -122,7 +122,7 @@ export class VisionMascot {
       egg(.285,.343,.31,body,leg,[0,-.265,.095]);leg.name=sign<0?'leftFoot':'rightFoot';
       this.parts[sign<0?'legL':'legR']=leg;
     }
-    this.shadow=createShadow();scene.add(this.shadow);
+    this.shadow=createShadow();this.scene.add(this.shadow);
     this.applyFace();
   }
   setHologram(on){
