@@ -59,14 +59,14 @@ export function wavePose(t){
     headRoll:-.11*reaction +.025*settle,
     // Positive local Z lifts its right arm out to the screen's right.
     armL:-.13-.065*reaction,
-    armR:.13-.12*windup +2.18*lifted+.075*waves*swing,
+    armR:.13-.12*windup +2.18*lifted+.19*waves*swing,
     armFrontL:.05*reaction,
     armFrontR:.34*lifted,
     // The shoulder must stay physically attached to the torso. No floating hand.
     shoulderOffsetX:.015*lifted,
     shoulderOffsetY:.012*lifted,
     shoulderOffsetZ:.075*lifted,
-    wristWave:.24*waves*swing,
+    wristWave:.29*waves*swing,
     armStretch:.16*lifted,
     feet:0,
     happy:pulse(t,.53,.86,2.78,3.20),
