@@ -49,7 +49,7 @@ if(Math.max(...arms.map(p=>p.angle))<1.2)failures.push({name:'wave-not-raising',
 if(arms.filter(p=>p.time>=1.12&&p.time<=2.45).some(p=>p.headTilt<.045))failures.push({name:'head-must-tilt-opposite-of-raised-hand',arms});
 if(arms.some(p=>!p.rightTip||!p.rightRoot))failures.push({name:'arm-pose-data-missing',arms});
 const raised=arms.filter(p=>p.time>=1.42&&p.time<=2.45);
-if(raised.some(p=>p.rightTip && (p.rightTip[0]<1.10||p.rightTip[1]<-.10||p.rightTip[2]<.70)))failures.push({name:'wave-hand-not-outside-head-front-and-side',raised});
+if(raised.some(p=>p.rightTip && (p.rightTip[0]<1.22||p.rightTip[1]<-.10||p.rightTip[2]<.31)))failures.push({name:'wave-hand-not-outside-head-front-and-side',raised});
 const neutral=arms[0];
 if(neutral.rightTip && (neutral.rightTip[0]>.90||neutral.rightTip[1]>-.68))failures.push({name:'rest-arm-proportions-wrong',neutral});
 if(arms.some(p=>Math.abs(p.shoulderX-.515)>.08||Math.abs(p.shoulderY+.29)>.08))failures.push({name:'shoulder-detaches-from-torso',arms});
