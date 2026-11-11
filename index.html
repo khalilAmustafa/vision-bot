@@ -40,14 +40,14 @@ button.primary:hover{background:#d7ebe0}
 import * as T from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
 import {RoundedBoxGeometry} from 'three/addons/geometries/RoundedBoxGeometry.js';
-const $=id=>document.getElementById(id),stage=$('three'),scene=new T.Scene(),camera=new T.PerspectiveCamera(38,1,.1,100);
-camera.position.set(3.25,1.4,7.4);
+const $=id=>document.getElementById(id),stage=$('three'),scene=new T.Scene(),camera=new T.PerspectiveCamera(40,1,.1,100);
+camera.position.set(2.0,.8,5.9);
 const renderer=new T.WebGLRenderer({alpha:true,antialias:true});
-renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.4;stage.appendChild(renderer.domElement);
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.10;stage.appendChild(renderer.domElement);
 const orbit=new OrbitControls(camera,renderer.domElement);orbit.enableDamping=true;orbit.target.set(0,0,0);orbit.minDistance=4;orbit.maxDistance=11;orbit.update();
-scene.add(new T.HemisphereLight(0xd5ebff,0x172134,2.6));
-let light=new T.DirectionalLight(0xffefe0,3.5);light.position.set(-3,5,6);scene.add(light);
-light=new T.DirectionalLight(0x4aeaff,3);light.position.set(4,2,-4);scene.add(light);
+scene.add(new T.HemisphereLight(0xe0eeff,0x263445,1.6));
+let light=new T.DirectionalLight(0xffefe0,2.6);light.position.set(-3,5,6);scene.add(light);
+light=new T.DirectionalLight(0x6da6ba,1.45);light.position.set(4,2,-4);scene.add(light);
 
 const mat={
   shell:new T.MeshPhysicalMaterial({color:'#f1ede5',roughness:.34,metalness:.04,clearcoat:.55,clearcoatRoughness:.23}),
@@ -157,11 +157,11 @@ let lastBlink=0;const clock=new T.Clock();
 function animate(){requestAnimationFrame(animate);const t=performance.now()/1000;if(t-lastBlink>4.8){blink=1;drawFace();lastBlink=t;setTimeout(()=>{blink=0;drawFace()},140)}
 if(action&&t-start>duration){action='';expression='neutral';drawFace()}
 const p=action?Math.max(0,Math.min(1,(t-start)/duration)):0,swing=Math.sin(p*Math.PI*5);
-body.position.y=Math.sin(t*1.6)*.065;body.rotation.z=Math.sin(t*.85)*.025;
+body.position.y=Math.sin(t*1.6)*.025;body.rotation.z=Math.sin(t*.85)*.025;
 head.rotation.y+=((followX*.48+(action==='curious'?.16:0))-head.rotation.y)*.05;head.rotation.x+=((-followY*.20)-head.rotation.x)*.05;
 head.rotation.z+=(((action==='curious'?.17:action==='happy'?.09:0))-head.rotation.z)*.07;
 for(const [side,a] of Object.entries(arms)){let active=side==='right'&&['wave','greet','thumbs'].includes(action);let target=active?-2.35:(action==='surprised'?-1.05:-.12);a.shoulder.rotation.z+=( (side==='right'?-target:target)-a.shoulder.rotation.z)*.16;a.shoulder.rotation.x+=((active?-.25:0)-a.shoulder.rotation.x)*.04;a.elbow.rotation.z+=((active?-.72:0)-a.elbow.rotation.z)*.14;a.hand.rotation.z+=((active&&action!=='thumbs'?swing*.55:0)-a.hand.rotation.z)*.25;}
-torus.rotation.z+=.001;if(Math.floor(t*12)%6===0){gazeX=followX;gazeY=followY;drawFace()}orbit.update();renderer.render(scene,camera)}animate();
+torus.rotation.z+=.0003;if(Math.floor(t*12)%6===0){gazeX=followX;gazeY=followY;drawFace()}orbit.update();renderer.render(scene,camera)}animate();
 let cv=null,stream=null,interval=null,lastPresent=false,lastSeen=0,lastGesture='',streak=0,gestureAt=0;
 $('cameraBtn').onclick=async()=>{
 if(stream){stopCam();return}
