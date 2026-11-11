@@ -38,11 +38,13 @@ for(let i=0;i<times.length;i++){
   await seq.evaluate(seconds=>window.__VISION_MOTION_REVIEW__.pose('wave',seconds),time);
   await seq.waitForTimeout(420);
   const pose=await seq.evaluate(()=>window.__VISION_MOTION_REVIEW__.status());
-  arms.push({time,angle:pose.rightArm,length:pose.armLength,shoulderX:pose.shoulderX,shoulderY:pose.shoulderY});
+  arms.push({time,angle:pose.rightArm,headTilt:pose.headTilt,length:pose.armLength,shoulderX:pose.shoulderX,shoulderY:pose.shoulderY});
   await seq.locator('#stage').screenshot({path:'review-artifacts/wave-'+String(i).padStart(2,'0')+'.png'});
 }
 console.log('WAVE-KEYFRAMES',JSON.stringify(arms));
 if(Math.max(...arms.map(p=>p.angle))<1.2)failures.push({name:'wave-not-raising',arms});
+// Positive head-roll tilts the top left while the character waves with its right arm.
+if(arms.filter(p=>p.time>=1.12&&p.time<=2.45).some(p=>p.headTilt<.045))failures.push({name:'head-must-tilt-opposite-of-raised-hand',arms});
 if(arms.some(p=>p.length<.32||p.length>.44))failures.push({name:'arm-distorted-outside-reference',arms});
 if(arms.some(p=>Math.abs(p.shoulderX-.615)>.08||Math.abs(p.shoulderY+.355)>.08))failures.push({name:'shoulder-detaches-from-torso',arms});
 if(seqErrors.length)failures.push({name:'wave-sequence-errors',errors:seqErrors});
