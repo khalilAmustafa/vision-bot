@@ -1,6 +1,7 @@
 
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+import {CLIP_DURATION, evaluatePose, blinkAmount} from './motion-v4.js';
 
 const C = { charcoal:'#3b3e42', visor:'#0e0e0e', yellow:'#ffd84d', sage:'#a8c7a6' };
 const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
@@ -52,7 +53,7 @@ export class VisionMascot {
     this.parts={};this.expression='neutral';this.active=null;this.actionStart=0;
     this.faceTarget={x:0,y:0};this.faceAim={x:0,y:0};
     this.time=0;this.idleTime=0;this.lastBlink=0;this.blink=0;
-    this.hologram=false;this.armWaves=0;
+    this.hologram=false;this.armWaves=0;this.faceMood=0;this.faceDrawAt=0;
     this.build();
   }
   build(){
@@ -113,6 +114,7 @@ export class VisionMascot {
       // No separate ball joint: the arm silhouette flows into the torso.
       const hand=egg(.19,.355,.198,body,a,[sign*.12,-.385,.02]);
       hand.rotation.z=sign*.24;
+      this.parts[sign<0?'leftFlipper':'rightFlipper']=hand;
       a.name=sign<0?'LeftArm_Pivot':'RightArm_Pivot';
       this.parts[sign<0?'left':'right']=a;
     }
@@ -138,111 +140,115 @@ export class VisionMascot {
   }
   setFaceTarget(x,y){this.faceTarget.x=clamp(x,-1,1);this.faceTarget.y=clamp(y,-1,1)}
   trigger(name,now=this.time){
-    const durations={wave:3.3,greet:3.4,happy:2.2,curious:2.3,surprised:1.8,think:2.5,point:2.6,sleep:3.2};
-    if(!durations[name])return;
-    this.active={name,start:now,duration:durations[name]};
-    this.expression=name==='greet'?'happy':name;
+    if(!CLIP_DURATION[name])return;
+    this.active={name,start:now,duration:CLIP_DURATION[name]};
+    this.expression=name==='greet'?'wave':name;
+    // Emotion and body pose ease in together; no instant emoji swap.
+  }
+  reset(){
+    this.active=null;this.expression='neutral';
+    this.setFaceTarget(0,0);
+    this.faceMood=0;
     this.applyFace();
   }
-  reset(){this.active=null;this.expression='neutral';this.setFaceTarget(0,0);this.applyFace()}
   applyFace(){
-    const c=this.ctx,W=this.canvas.width,H=this.canvas.height;
-    c.clearRect(0,0,W,H);
+    const c=this.ctx;
+    c.clearRect(0,0,1024,690);
     c.save();c.lineCap='round';c.lineJoin='round';
-    const xx=this.faceAim.x*22, yy=-this.faceAim.y*17;
-    const glow='#ffd84d';c.fillStyle=glow;c.strokeStyle=glow;
-    c.shadowColor='rgba(255,216,77,.53)';c.shadowBlur=22;
-    const eyes=[330+xx,690+xx];
-    const type=this.expression,blink=this.blink>.65;
+    const xx=this.faceAim.x*20,yy=-this.faceAim.y*14;
+    const glow='#ffd84d';
+    const eyes=[330+xx,690+xx],emotion=this.expression;
+    const smile=emotion==='wave'||emotion==='greet'||emotion==='happy'?this.faceMood:0;
+    const blink=Math.min(1,Math.max(0,this.blink));
+    c.shadowColor='rgba(255,216,77,.45)';c.shadowBlur=18;
     for(let i=0;i<2;i++){
       const x=eyes[i],y=305+yy;
-      c.beginPath();
-      if(blink||type==='sleep'||type==='think'){
-        c.lineWidth=27;c.moveTo(x-51,y+6);c.lineTo(x+51,y+6);c.stroke();
-      }else if(type==='happy'||type==='wave'||type==='greet'){
-        c.lineWidth=37;c.moveTo(x-61,y+35);c.quadraticCurveTo(x,y-75,x+61,y+35);c.stroke();
-      }else if(type==='surprised'){
-        c.ellipse(x,y,47,66,0,0,Math.PI*2);c.fill();
-      }else if(type==='curious'&&i===0){
-        c.ellipse(x,y,40,54,0,0,Math.PI*2);c.fill();
-      }else if(type==='sad'){
-        c.lineWidth=33;c.moveTo(x-50,y-12);c.quadraticCurveTo(x,y+36,x+50,y-12);c.stroke();
-      }else{
-        c.ellipse(x,y,64,73,0,0,Math.PI*2);c.fill();
+      const h=Math.max(4,73*(1-blink));
+      c.fillStyle=glow;c.strokeStyle=glow;
+      if(emotion==='sleep'||emotion==='think'){
+        c.beginPath();c.lineWidth=23;c.moveTo(x-48,y+6);c.lineTo(x+48,y+6);c.stroke();continue;
       }
+      if(emotion==='surprised'){
+        c.beginPath();c.ellipse(x,y,46,60*(1-.88*blink),0,0,Math.PI*2);c.fill();continue;
+      }
+      if(emotion==='curious'&&i===0){
+        c.beginPath();c.ellipse(x,y,40,55*(1-.90*blink),0,0,Math.PI*2);c.fill();continue;
+      }
+      // A neutral pair of warm-yellow ovals morphs into smiling arcs.
+      if(smile<.999){
+        c.globalAlpha=(1-smile);
+        c.beginPath();c.ellipse(x,y,63,h,0,0,Math.PI*2);c.fill();
+      }
+      if(smile>.001){
+        c.globalAlpha=smile;
+        c.beginPath();c.lineWidth=36;c.moveTo(x-60,y+28);
+        c.quadraticCurveTo(x,y-68*(1-blink)+y*blink*.0,x+60,y+28);
+        c.stroke();
+      }
+      c.globalAlpha=1;
     }
+    c.fillStyle=glow;c.strokeStyle=glow;
     c.beginPath();
-    if(type==='surprised'){
-      c.ellipse(512+xx*.25,470+yy*.25,27,35,0,0,Math.PI*2);c.fill();
-    }else if(type==='sad'){
-      c.lineWidth=20;c.arc(512,509,42,Math.PI*1.11,Math.PI*1.89);c.stroke();
-    }else if(type==='sleep'||type==='think'){
-      c.lineWidth=20;c.moveTo(474,476);c.lineTo(550,476);c.stroke();
+    if(emotion==='surprised'){
+      c.ellipse(512,471,26,34,0,0,Math.PI*2);c.fill();
+    }else if(emotion==='sad'){
+      c.lineWidth=21;c.arc(512,508,45,Math.PI*1.11,Math.PI*1.88);c.stroke();
+    }else if(emotion==='sleep'||emotion==='think'){
+      c.lineWidth=18;c.moveTo(476,470);c.lineTo(548,470);c.stroke();
     }else{
-      // Rounded crescent smile matches the approved face rather than a generic emoticon.
-      c.moveTo(423,442);c.quadraticCurveTo(512,462,601,442);
-      c.quadraticCurveTo(583,530,512,530);
-      c.quadraticCurveTo(441,530,423,442);c.closePath();c.fill();
+      c.moveTo(430,445);c.quadraticCurveTo(512,456,594,445);
+      c.quadraticCurveTo(585,521,512,521);
+      c.quadraticCurveTo(439,521,430,445);
+      c.closePath();c.fill();
     }
     c.restore();this.texture.needsUpdate=true;
   }
   update(time,dt){
-    dt=clamp(dt,.001,.05);this.time=time;this.idleTime+=dt;
-    const s=this.idleTime;
-    let type='',u=0,fade=0;
+    const clamp=(n,lo,hi)=>Math.max(lo,Math.min(hi,n));
+    const damp=(value,target,rate)=>value+(target-value)*(1-Math.exp(-rate*dt));
+    dt=clamp(dt,.001,.05);
+    this.time=time;this.idleTime+=dt;
+    let clip='',elapsed=0;
     if(this.active){
-      type=this.active.name;u=clamp((time-this.active.start)/this.active.duration,0,1);
-      fade=smooth(0,.18,u)*(1-smooth(.78,1,u));
-      if(u>=1){this.active=null;this.expression='neutral';this.applyFace();type='';fade=0}
+      clip=this.active.name;
+      elapsed=Math.max(0,time-this.active.start);
+      if(elapsed>=this.active.duration){
+        this.active=null;clip='';elapsed=0;this.expression='neutral';
+      }
     }
-    // Independent low-amplitude breathing: always alive but never twitchy.
-    const whole=this.parts.whole;
-    const idleY=Math.sin(s*1.5)*.012, idleTilt=Math.sin(s*.82)*.012;
-    let bob=idleY,bodyTilt=idleTilt,headTilt=Math.sin(s*.66)*.018;
-    let armL=-.13,armR=.13,armForward=0,armLift=0;
-    let legs=0;
-    if(type==='wave'||type==='greet'){
-      const amp=fade;
-      const wave=Math.sin(Math.max(0,u-.14)*Math.PI*9)*.20;
-      armR=.20+amp*(2.03+wave);
-      armL=-.11;headTilt=-.11*amp;bodyTilt=-.036*amp;
-      bob+=.028*amp*Math.sin(u*13);armForward=.42*amp;armLift=amp;
-    }else if(type==='happy'){
-      bob+=Math.abs(Math.sin(u*Math.PI*3))*.12*fade;
-      headTilt=.10*fade;bodyTilt=Math.sin(u*14)*.055*fade;
-      armR+=.85*fade;armL-=.85*fade;
-      legs=Math.sin(u*12)*.10*fade;
-    }else if(type==='curious'||type==='think'){
-      headTilt=-.17*fade;armR+=.22*fade;bodyTilt=.035*fade;
-    }else if(type==='surprised'){
-      bob+=.09*fade;armR+=.65*fade;armL-=.65*fade;headTilt=-.045*fade;
-    }else if(type==='point'){
-      armR= .16+1.52*fade;headTilt=-.09*fade;bodyTilt=-.04*fade;
-    }else if(type==='sleep'){
-      headTilt=.14*fade;bob-=.035*fade;
+    const pose=evaluatePose(clip,elapsed,this.idleTime);
+    const whole=this.parts.whole,head=this.parts.head;
+    // Relative hand/head/body motion is deliberately offset for follow-through.
+    whole.position.y=damp(whole.position.y,pose.y,10);
+    whole.rotation.z=damp(whole.rotation.z,pose.lean,10);
+    whole.rotation.x=damp(whole.rotation.x,pose.bodyPitch,8);
+    whole.scale.x=damp(whole.scale.x,pose.sx,8);
+    whole.scale.y=damp(whole.scale.y,pose.sy,8);
+    whole.scale.z=damp(whole.scale.z,pose.sz,8);
+    this.faceAim.x=damp(this.faceAim.x,this.faceTarget.x,4.5);
+    this.faceAim.y=damp(this.faceAim.y,this.faceTarget.y,4.5);
+    head.rotation.y=damp(head.rotation.y,pose.headYaw+this.faceAim.x*.24,7);
+    head.rotation.x=damp(head.rotation.x,pose.headPitch-this.faceAim.y*.14,7);
+    head.rotation.z=damp(head.rotation.z,pose.headRoll,8.5);
+    this.parts.left.rotation.z=damp(this.parts.left.rotation.z,pose.armL,10);
+    this.parts.right.rotation.z=damp(this.parts.right.rotation.z,pose.armR,12);
+    this.parts.left.rotation.x=damp(this.parts.left.rotation.x,pose.armFrontL,8);
+    this.parts.right.rotation.x=damp(this.parts.right.rotation.x,pose.armFrontR,10);
+    const r=this.parts.right;
+    r.position.x=damp(r.position.x,.615+pose.shoulderOffsetX,10);
+    r.position.y=damp(r.position.y,-.355+pose.shoulderOffsetY,10);
+    r.position.z=damp(r.position.z,.055+pose.shoulderOffsetZ,10);
+    this.parts.leftFlipper.rotation.z=damp(this.parts.leftFlipper.rotation.z,-.24,10);
+    this.parts.rightFlipper.rotation.z=damp(this.parts.rightFlipper.rotation.z,.24+pose.wristWave,15);
+    this.parts.legL.rotation.x=damp(this.parts.legL.rotation.x,pose.feet,9);
+    this.parts.legR.rotation.x=damp(this.parts.legR.rotation.x,-pose.feet,9);
+    // Blinks have eyelid opening/closing rather than a one-frame disappearance.
+    this.blink=blinkAmount(this.idleTime);
+    this.faceMood=damp(this.faceMood,pose.happy,9);
+    if(clip==='wave'||clip==='greet')this.expression=clip;
+    // Face updates are capped for mobile but still smoothly morph between expressions.
+    if(time-this.faceDrawAt>.038){
+      this.faceDrawAt=time;this.applyFace();
     }
-    whole.position.y=spring(whole.position.y,bob,6,dt);
-    whole.rotation.z=spring(whole.rotation.z,bodyTilt,6,dt);
-    const head=this.parts.head;
-    this.faceAim.x=spring(this.faceAim.x,this.faceTarget.x,4.3,dt);
-    this.faceAim.y=spring(this.faceAim.y,this.faceTarget.y,4.3,dt);
-    head.rotation.y=spring(head.rotation.y,this.faceAim.x*.25,4.8,dt);
-    head.rotation.x=spring(head.rotation.x,-this.faceAim.y*.14,4.8,dt);
-    head.rotation.z=spring(head.rotation.z,headTilt,6,dt);
-    this.parts.left.rotation.z=spring(this.parts.left.rotation.z,armL,9,dt);
-    this.parts.right.rotation.z=spring(this.parts.right.rotation.z,armR,9,dt);
-    this.parts.right.rotation.x=spring(this.parts.right.rotation.x,armForward,8,dt);
-    this.parts.right.position.x=spring(this.parts.right.position.x,.615+.17*armLift,8,dt);
-    this.parts.right.position.y=spring(this.parts.right.position.y,-.355+.12*armLift,8,dt);
-    this.parts.right.position.z=spring(this.parts.right.position.z,.055+.39*armLift,8,dt);
-    this.parts.left.rotation.x=spring(this.parts.left.rotation.x,0,8,dt);
-    this.parts.legL.rotation.x=spring(this.parts.legL.rotation.x,legs,9,dt);
-    this.parts.legR.rotation.x=spring(this.parts.legR.rotation.x,-legs,9,dt);
-    whole.scale.y=spring(whole.scale.y,1+(type==='happy'?.025*fade*Math.sin(u*16):.005*Math.sin(s*1.6)),7,dt);
-    const prev=this.blink;
-    // Two-frame eyelid motion, with natural variable gaps.
-    const cycle=s%5.6;
-    this.blink=cycle>4.75&&cycle<4.89?1:0;
-    if(prev!==this.blink || Math.floor(s*12)!==Math.floor((s-dt)*12))this.applyFace();
   }
 }
