@@ -1,23 +1,35 @@
-# VISION Club — Interactive 3D Mascot
+# VISION Club — Interactive Mascot
 
-A mobile-friendly, browser-based Three.js robot mascot for the VISION entrepreneurship and innovation club booth at ASU.
+A mobile-friendly Three.js prototype for the VISION Entrepreneurship & Innovation Club booth at ASU.
 
 ## Preview
-When GitHub Pages deployment succeeds, visit: https://khalilamustafa.github.io/vision-bot/
 
-## Features
-- Procedural editable 3D robot with head, torso, articulated arms and hands
-- Idle float, greeting, wave, curious, surprise, thumbs-up and happy reactions
-- Adjustable shell, accent and eye colors
-- Solid and experimental hologram material modes
-- Optional webcam face/gesture tracking using MediaPipe (open palm, thumbs up, victory)
-- Fullscreen booth view
+https://khalilamustafa.github.io/vision-bot/
+
+## Art direction (v2)
+
+A compact, original companion robot inspired by clean soft-body industrial design, expressive desktop robots, and the user's reference sketches. This is **not** an Eilik model or a licensed third-party asset.
+
+Changes from the first prototype:
+- Soft egg-shaped torso and continuous rounded head instead of assembled boxes
+- Broad mechanical flipper arms for greeting and waving
+- Larger expressive visor with readable eyes and mouth
+- Removed floating cube, headphone discs and oversized projection effects
+- Neutral cream and sage materials, controlled cyan accents and studio lighting
+- Cleaner navy booth presentation
+
+## Interactions
+
+Manual controls: Greeting, Wave, Happy, Curious, Thumbs Up, Surprise, appearance colors, solid/holographic modes, orbit camera, fullscreen booth mode.
+
+Optional webcam computer vision: MediaPipe face detection (head-following) and gesture recognition (open palm, thumbs-up, victory). Video is processed in the browser; no recording or server-side inference.
+
+## Implementation
+
+Static `index.html` using CDN-imported Three.js and dynamically loaded MediaPipe models. There is no build step, and GitHub Pages deploys via `.github/workflows/pages.yml` on pushes to `main`.
+
+**Limitations:** Internet is needed for CDN/model loading. Webcam requires HTTPS permission. Runtime appearance and CV reliability need checking on a real browser and the intended booth computer.
 
 ## Deployment
-This is a static HTML application. `.github/workflows/pages.yml` deploys automatically on pushes to `main`. In repository **Settings → Pages**, select **GitHub Actions** as the build and deployment source.
 
-## Development
-Open `index.html` using a local web server. The file uses native JavaScript modules and CDN-hosted Three.js/MediaPipe dependencies. A plain `file://` URL may not work.
-
-## Notes
-Camera use requires HTTPS or localhost and the visitor's permission. All webcam processing runs in the browser and no video is stored or sent to this repository. The app fetches JavaScript and CV models from external CDNs, so internet is necessary for first load and camera model initialization. This remains a prototype, and should be tested on the actual booth computer before the event.
+Open **Settings → Pages**, set source to **GitHub Actions**, and inspect the **Actions** tab for deployment status.
