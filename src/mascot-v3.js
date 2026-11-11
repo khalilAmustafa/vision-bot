@@ -67,9 +67,10 @@ export class VisionMascot {
     const yellow=new THREE.MeshBasicMaterial({color:C.yellow,toneMapped:false});
     this.materials={shell,body,trim,dark,black,glass,green,yellow};
     const whole=new THREE.Group();this.root.add(whole);this.parts.whole=whole;
-    const neck=egg(.22,.14,.25,dark,whole,[0,-.105,0]);neck.name='neck';
-    const head=new THREE.Group();head.position.set(0,-.08,0);whole.add(head);this.parts.head=head;
-    // The center of the head lies 0.70 units above its neck pivot.
+    // Locked reference: NO visible neck object. The head rests directly on the torso.
+    // Small overlap keeps the shoulder-line connection visually closed in neutral poses.
+    const head=new THREE.Group();head.position.set(0,-.115,0);whole.add(head);this.parts.head=head;
+    // Pivot remains under the head, inside the upper torso; no ball or stem added.
     rounded(2.16,1.65,1.40,.5,shell,head,[0,.76,0]).name='head_shell';
     // Slightly proud rim and an inset glossy visor, with a continuous silhouette.
     softPanel(1.82,1.31,.35,.09,trim,head,[0,.72,.592],.045).name='screen_bezel';
