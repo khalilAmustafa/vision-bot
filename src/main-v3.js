@@ -11,7 +11,7 @@ camera.position.set(2.6,.66,5.7);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.35;
+renderer.toneMappingExposure=1.14;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));
 renderer.setClearColor(0xffffff,0);
 host.appendChild(renderer.domElement);
@@ -29,11 +29,11 @@ controls.maxDistance=9;
 controls.maxPolarAngle=Math.PI*.75;
 controls.update();
 
-scene.add(new THREE.HemisphereLight('#ffffff','#717985',2.5));
-const key=new THREE.DirectionalLight('#fff5e7',3.2);key.position.set(-3.4,5.5,7);scene.add(key);
-const fill=new THREE.DirectionalLight('#dce3ec',1.5);fill.position.set(5,3,2);scene.add(fill);
-const rim=new THREE.DirectionalLight('#e9fff0',3.1);rim.position.set(2.5,4,-4);scene.add(rim);
-const low=new THREE.DirectionalLight('#c9d9d1',.9);low.position.set(-4,-1,-5);scene.add(low);
+scene.add(new THREE.HemisphereLight('#ffffff','#717985',1.65));
+const key=new THREE.DirectionalLight('#fff5e7',2.4);key.position.set(-3.4,5.5,7);scene.add(key);
+const fill=new THREE.DirectionalLight('#dce3ec',.85);fill.position.set(5,3,2);scene.add(fill);
+const rim=new THREE.DirectionalLight('#e9fff0',2.0);rim.position.set(2.5,4,-4);scene.add(rim);
+const low=new THREE.DirectionalLight('#c9d9d1',.6);low.position.set(-4,-1,-5);scene.add(low);
 
 const bot=new VisionMascot(scene);
 let cameraTarget=null;
@@ -137,8 +137,16 @@ function animate(now){
   const delta=Math.min((now-prev)/1000,.05);prev=now;
   if(!introDone&&now-start>1700){introDone=true;trigger('greet')}
   if(cameraTarget){
-    camera.position.lerp(cameraTarget,1-Math.exp(-delta*4.2));
-    if(camera.position.distanceTo(cameraTarget)<.009)cameraTarget=null;
+    // Orbit the character at constant radius; linear Cartesian lerp zooms through it.
+    const p=new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
+    const q=new THREE.Spherical().setFromVector3(cameraTarget.clone().sub(controls.target));
+    const factor=1-Math.exp(-Math.min(delta,.15)*6.5);
+    const angleDelta=Math.atan2(Math.sin(q.theta-p.theta),Math.cos(q.theta-p.theta));
+    p.theta+=angleDelta*factor;
+    p.phi+=(q.phi-p.phi)*factor;
+    p.radius+=(q.radius-p.radius)*factor;
+    camera.position.copy(new THREE.Vector3().setFromSpherical(p).add(controls.target));
+    if(camera.position.distanceTo(cameraTarget)<.015)cameraTarget=null;
   }
   bot.update(now/1000,delta);
   controls.update();
