@@ -22,6 +22,8 @@ async function shot(name,viewport,steps=[]){
 await shot('desktop-idle',{width:1440,height:950});
 await shot('desktop-wave',{width:1440,height:950},['[data-motion=wave]']);
 await shot('desktop-side',{width:1440,height:950},['[data-view=side]']);
+await shot('desktop-front',{width:1440,height:950},['[data-view=front]']);
+await shot('desktop-back',{width:1440,height:950},['[data-view=back]']);
 await shot('mobile-idle',{width:390,height:844});
 await browser.close();
 if(failures.length){console.error('VISUAL SMOKE FAIL',JSON.stringify(failures));process.exit(1)}
