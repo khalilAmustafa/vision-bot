@@ -1,0 +1,28 @@
+name: Visual review — VISION mascot
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/*-v3.js'
+      - 'src/style-v3.css'
+      - 'index-v3-preview.html'
+      - '.github/workflows/visual-review.yml'
+permissions:
+  contents: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Playwright core
+        run: npm install --no-save playwright-core@1.58.0
+      - name: Start static server
+        run: python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/vision-server.log 2>&1 &
+      - name: Capture 3D and verify no JS errors
+        run: node tools/visual-review.mjs
+      - name: Store screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vision-mascot-review
+          path: review-artifacts/
