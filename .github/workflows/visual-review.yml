@@ -6,6 +6,7 @@ on:
       - 'src/*-v3.js'
       - 'src/style-v3.css'
       - 'index-v3-preview.html'
+      - 'tools/visual-review.mjs'
       - '.github/workflows/visual-review.yml'
 permissions:
   contents: read
