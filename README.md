@@ -8,14 +8,17 @@ Interactive, fully procedural 3D mascot for the VISION Entrepreneurship & Innova
 
 - **V3 reference-based model** published to `index.html`, with front/3/4/side/back view controls.
 - Designed from the approved charcoal, black, yellow and mint-green turnaround.
-- Smooth, coded animation tests: idle, wave, happy, curious, surprised, point, sleep.
+- **V4 animation pass:** storyboard-timed Wave/Greet, subtle grounded Idle, gradual smile/eye morph, smooth overlap between head/body/arm and an optional ×0.5 motion review.
+- Additional procedural tests: happy, curious, surprised, point, sleep.
 - Manual controls on mobile and desktop, optional face and hand tracking from MediaPipe.
 - Solid shading by default; optional experimental hologram effect.
 - No build step; GitHub Pages deploys static files automatically on pushes to `main`.
 
 ## Files
 
-- `src/mascot-v3.js` — scene graph, model geometry, face texture, procedural animation rig
+- `src/mascot-v3.js` — scene graph, approved model geometry, morphing face texture and articulated motion
+- `src/motion-v4.js` — pure Idle/Wave animation curves with anticipation, deliberate beats and gentle recovery
+- `ANIMATION_SPEC.md` — acting storyboard and reference-based motion constraints
 - `src/main-v3.js` — viewer, lighting, camera orbit, interaction UI
 - `src/cv-v3.js` — optional camera and MediaPipe detection
 - `src/style-v3.css` — responsive studio UI
@@ -32,7 +35,7 @@ The webcam feed is processed within your browser and is not stored by this app. 
 
 ## Visual QA
 
-`.github/workflows/visual-review.yml` boots the page in a real Chrome browser via Playwright, captures desktop and mobile views, and fails on JavaScript page errors. The QA artifacts contain front, 3/4, side, back, wave and mobile screenshots. **Camera tracking itself is not tested in CI** and should be validated with booth lighting.
+`.github/workflows/visual-review.yml` boots the page in a real Chrome browser via Playwright, captures desktop and mobile views, and fails on JavaScript page errors. The QA artifacts contain front, 3/4, side, back, wave and mobile screenshots, plus twelve staged Wave keyposes with assertions for connected shoulders and reference arm length. **Camera tracking itself is not tested in CI** and should be validated with booth lighting.
 
 ## Limitations
 
