@@ -250,7 +250,7 @@ export class VisionMascot {
     r.position.z=damp(r.position.z,.055+pose.shoulderOffsetZ,10);
     this.parts.leftFlipper.rotation.z=damp(this.parts.leftFlipper.rotation.z,-.24,10);
     this.parts.rightFlipper.rotation.z=damp(this.parts.rightFlipper.rotation.z,.24+pose.wristWave,15);
-    this.parts.rightFlipper.scale.y=damp(this.parts.rightFlipper.scale.y,1+pose.armStretch,10);
+    this.parts.rightFlipper.scale.y=damp(this.parts.rightFlipper.scale.y,.355*(1+pose.armStretch),10);
     this.parts.legL.rotation.x=damp(this.parts.legL.rotation.x,pose.feet,9);
     this.parts.legR.rotation.x=damp(this.parts.legR.rotation.x,-pose.feet,9);
     // Blinks have eyelid opening/closing rather than a one-frame disappearance.
