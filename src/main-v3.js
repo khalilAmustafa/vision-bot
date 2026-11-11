@@ -35,7 +35,9 @@ const fill=new THREE.DirectionalLight('#dce3ec',.85);fill.position.set(5,3,2);sc
 const rim=new THREE.DirectionalLight('#e9fff0',2.0);rim.position.set(2.5,4,-4);scene.add(rim);
 const low=new THREE.DirectionalLight('#c9d9d1',.6);low.position.set(-4,-1,-5);scene.add(low);
 
+const modelStart=performance.now();
 const bot=new VisionMascot(scene);
+window.__VISION_INIT_MS=performance.now()-modelStart;
 let motionClock=performance.now()/1000;
 let playbackRate=1;
 let debugPose=null;
