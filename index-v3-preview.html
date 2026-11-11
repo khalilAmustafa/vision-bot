@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f8f7f5">
+<meta name="description" content="An interactive 3D character study for VISION Club, built from the approved character turnaround.">
+<title>VISION Mascot · Character Lab</title>
+<link rel="stylesheet" href="./src/style-v3.css">
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.181.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.181.0/examples/jsm/"}}</script>
+</head>
+<body>
+<header><div class="wrap header-inner"><div><div class="brand">VISI<em>O</em>N</div><div class="brand-sub">ENTREPRENEURSHIP & INNOVATION CLUB</div></div><div class="header-right"><span class="version">CHARACTER STUDY / V03</span><span class="locked"><i></i> Reference locked</span></div></div></header>
+<div class="wrap intro"><div><p class="intro-label">Interactive character study · 3D prototype</p><h1>Meet the VISION mascot.</h1></div><p class="intro-desc">Built from the approved turnaround. Test the character in motion before we connect it to the booth.</p></div>
+<main class="wrap workspace">
+<section class="stage" id="stage">
+<div id="canvas-host" aria-label="Interactive 3D model of the VISION mascot"></div>
+<div class="stage-top"><div><div class="overline">CHARACTER / 01</div><div class="stage-id">Charcoal body · Yellow display · Mint indicators</div></div><div class="canvas-tag">LIVE 3D MODEL</div></div>
+<video id="camera-preview" playsinline muted autoplay></video>
+<div class="stage-bottom"><div class="speech" id="speech">Hey! Welcome to VISION.</div><div class="scene-help">Drag to rotate · Scroll to zoom</div></div>
+</section>
+<aside class="panel">
+<section class="card wide-card"><div class="card-title"><strong>Motion tests</strong><span>Procedural rig</span></div>
+<div class="controls">
+<button class="btn" data-motion="wave">Wave</button>
+<button class="btn" data-motion="happy">Happy</button>
+<button class="btn" data-motion="curious">Curious</button>
+<button class="btn" data-motion="surprised">Surprised</button>
+<button class="btn" data-motion="point">Point</button>
+<button class="btn" data-motion="sleep">Sleepy</button>
+</div>
+<p class="section-note">Head, torso, arms and legs are independently animated with soft easing. The face is a live display texture.</p>
+</section>
+<section class="card"><div class="card-title"><strong>Turnaround</strong><span>Drag any angle</span></div>
+<div class="inline-group">
+<button class="btn" data-view="front">Front</button><button class="btn selected" data-view="three">3/4</button>
+<button class="btn" data-view="side">Side</button><button class="btn" data-view="back">Back</button>
+</div>
+<div class="swatches"><span class="swatch" style="background:#3b3e42"></span><span class="swatch" style="background:#0e0e0e"></span><span class="swatch" style="background:#ffd84d"></span><span class="swatch" style="background:#a8c7a6"></span><span class="swatch-info">Approved palette</span></div>
+</section>
+<section class="card"><div class="card-title"><strong>Rendering</strong><span>Solid by default</span></div>
+<div class="controls"><button class="btn selected" id="solid-btn">Reference solid</button><button class="btn" id="holo-btn">Holo test</button></div>
+<p class="section-note">Hologram is a rendering experiment. The base silhouette stays unchanged.</p>
+</section>
+<section class="card wide-card"><div class="card-title"><strong>Camera interaction</strong><span>Optional</span></div>
+<button class="btn primary wide" id="camera-btn">Enable camera & gestures</button>
+<div class="camera-status" id="camera-status">Off — manual animations work without camera access.</div>
+<p class="section-note">Face detected → looks at visitor. Open palm → wave. Thumbs-up / peace → happy. Processing happens locally in your browser.</p>
+</section>
+<section class="card"><div class="controls"><button class="btn" id="reset-btn">Reset pose</button><button class="btn" id="booth-btn">Booth mode</button></div></section>
+</aside>
+</main>
+<footer class="wrap"><span>VISION CLUB · MODEL STUDY, NOT A FINAL RIGGED GLB</span><span>Three.js · MediaPipe · No paid services</span></footer>
+<script type="module" src="./src/main-v3.js"></script>
+</body>
+</html>
