@@ -110,7 +110,7 @@ export class VisionMascot {
       const a=new THREE.Group();
       a.position.set(sign*.615,-.355,.055);
       whole.add(a);a.rotation.z=-sign*.18;
-      egg(.158,.195,.16,body,a,[sign*.025,-.11,0]);
+      // No separate ball joint: the arm silhouette flows into the torso.
       const hand=egg(.19,.355,.198,body,a,[sign*.12,-.385,.02]);
       hand.rotation.z=sign*.24;
       a.name=sign<0?'LeftArm_Pivot':'RightArm_Pivot';
@@ -119,7 +119,7 @@ export class VisionMascot {
     // Short, thick feet; the character is grounded, not hovering.
     for(const sign of [-1,1]){
       const leg=new THREE.Group();leg.position.set(sign*.295,-1.005,.01);whole.add(leg);
-      egg(.28,.36,.30,body,leg,[0,-.27,.075]);leg.name=sign<0?'leftFoot':'rightFoot';
+      rounded(.54,.68,.58,.25,body,leg,[0,-.28,.075]);leg.name=sign<0?'leftFoot':'rightFoot';
       this.parts[sign<0?'legL':'legR']=leg;
     }
     this.shadow=createShadow();this.scene.add(this.shadow);
@@ -199,14 +199,14 @@ export class VisionMascot {
     const whole=this.parts.whole;
     const idleY=Math.sin(s*1.5)*.012, idleTilt=Math.sin(s*.82)*.012;
     let bob=idleY,bodyTilt=idleTilt,headTilt=Math.sin(s*.66)*.018;
-    let armL=-.13,armR=.13,armForward=0;
+    let armL=-.13,armR=.13,armForward=0,armLift=0;
     let legs=0;
     if(type==='wave'||type==='greet'){
       const amp=fade;
       const wave=Math.sin(Math.max(0,u-.14)*Math.PI*9)*.20;
       armR=.20+amp*(2.03+wave);
       armL=-.11;headTilt=-.11*amp;bodyTilt=-.036*amp;
-      bob+=.028*amp*Math.sin(u*13);armForward=.07*amp;
+      bob+=.028*amp*Math.sin(u*13);armForward=.42*amp;armLift=amp;
     }else if(type==='happy'){
       bob+=Math.abs(Math.sin(u*Math.PI*3))*.12*fade;
       headTilt=.10*fade;bodyTilt=Math.sin(u*14)*.055*fade;
@@ -232,6 +232,9 @@ export class VisionMascot {
     this.parts.left.rotation.z=spring(this.parts.left.rotation.z,armL,9,dt);
     this.parts.right.rotation.z=spring(this.parts.right.rotation.z,armR,9,dt);
     this.parts.right.rotation.x=spring(this.parts.right.rotation.x,armForward,8,dt);
+    this.parts.right.position.x=spring(this.parts.right.position.x,.615+.17*armLift,8,dt);
+    this.parts.right.position.y=spring(this.parts.right.position.y,-.355+.12*armLift,8,dt);
+    this.parts.right.position.z=spring(this.parts.right.position.z,.055+.39*armLift,8,dt);
     this.parts.left.rotation.x=spring(this.parts.left.rotation.x,0,8,dt);
     this.parts.legL.rotation.x=spring(this.parts.legL.rotation.x,legs,9,dt);
     this.parts.legR.rotation.x=spring(this.parts.legR.rotation.x,-legs,9,dt);
