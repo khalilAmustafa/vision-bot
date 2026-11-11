@@ -10,7 +10,7 @@ async function shot(name,viewport,steps=[]){
   page.on('pageerror',e=>errors.push('PAGE '+String(e)));
   page.on('console',msg=>{if(msg.type()==='error')errors.push('CONSOLE '+msg.text())});
   await page.goto('http://127.0.0.1:4173/index-v3-preview.html',{waitUntil:'domcontentloaded'});
-  await page.waitForTimeout(5000);
+  await page.waitForTimeout(6500);
   for(const step of steps){await page.locator(step).click();await page.waitForTimeout(1100)}
   await page.screenshot({path:'review-artifacts/'+name+'.png',fullPage:true});
   const canvas=await page.locator('#canvas-host canvas').count();
