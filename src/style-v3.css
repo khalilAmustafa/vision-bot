@@ -39,3 +39,10 @@ kbd{font:inherit;border:1px solid #dadfd9;background:#f1f2f0;border-radius:4px;p
 @media(max-width:790px){.wrap{padding:0 14px}.header-inner{min-height:72px}.brand{font-size:26px}.brand-sub{font-size:8px;letter-spacing:1.6px;margin-top:6px}.version{display:none}.locked{font-size:9px;padding:7px 9px}.intro{padding-top:22px;padding-bottom:14px;display:block}.intro h1{font-size:27px;letter-spacing:-1px}.intro-desc{margin-top:10px;max-width:none;font-size:12px}.workspace{grid-template-columns:1fr;gap:13px}.stage{height:59dvh;min-height:430px;max-height:650px;border-radius:15px}.stage-top{top:16px;left:17px;right:17px}.stage-bottom{left:18px;right:18px;bottom:17px}.speech{font-size:14px;max-width:245px}.scene-help{display:none}.canvas-tag{font-size:9px;padding:8px}.panel{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{min-width:0}.card.wide-card{grid-column:1/-1}.btn{min-height:43px}.inline-group{grid-template-columns:repeat(4,1fr)}footer{font-size:10px;flex-direction:column;gap:5px}.booth .stage{height:calc(100dvh - 72px)}.booth .speech{font-size:18px}.booth .stage-top{top:25px}.booth #camera-preview{top:80px}}
 @media(max-width:500px){.panel{grid-template-columns:1fr}.card.wide-card{grid-column:auto}.scene-help{display:none}.controls{grid-template-columns:repeat(3,1fr)}.controls .btn{padding:10px 6px;font-size:11px}.stage{height:54dvh;min-height:360px}.speech{max-width:220px}}
 @media(prefers-reduced-motion:reduce){.btn{transition:none}}
+
+/* Mobile art review: never cover the character or its antennas. */
+@media(max-width:500px){
+  .stage-top .canvas-tag,.stage-top .stage-id{display:none}
+  .stage-bottom .speech{display:none}
+  .booth .stage-bottom .speech{display:block;font-size:clamp(17px,4vw,28px);max-width:270px;background:#fff9;padding:10px 13px;border-radius:12px}
+}
