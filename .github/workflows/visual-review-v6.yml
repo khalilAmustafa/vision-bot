@@ -1,0 +1,30 @@
+name: Visual review — VISION mascot V6
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'src/mascot-v6.js'
+      - 'src/curve-arm-v6.js'
+      - 'src/main-v6.js'
+      - 'index-v6-preview.html'
+      - 'tools/visual-review-v6.mjs'
+      - '.github/workflows/visual-review-v6.yml'
+permissions:
+  contents: read
+jobs:
+  reference-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Playwright
+        run: npm install --no-save playwright-core@1.58.0
+      - name: Start local web server
+        run: python3 -m http.server 4173 --bind 127.0.0.1 >/tmp/vision-v6-server.log 2>&1 &
+      - name: Review V6 model and wave
+        run: node tools/visual-review-v6.mjs
+      - name: Upload V6 screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vision-mascot-v6-review
+          path: review-artifacts/
