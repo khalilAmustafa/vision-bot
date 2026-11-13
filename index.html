@@ -7,7 +7,7 @@
 <meta name="description" content="An interactive 3D character study for VISION Club, built from the approved character turnaround.">
 <title>VISION Mascot · Character Lab</title><link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22%3E%3Crect width=%2248%22 height=%2248%22 rx=%2212%22 fill=%22%233b3e42%22/%3E%3Ccircle cx=%2216%22 cy=%2224%22 r=%225%22 fill=%22%23ffd84d%22/%3E%3Ccircle cx=%2232%22 cy=%2224%22 r=%225%22 fill=%22%23ffd84d%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="./src/style-v3.css">
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.181.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.181.0/examples/jsm/"}}</script>
+<script type="importmap">{"imports":{"three":"./vendor/three/build/three.module.js","three/addons/":"./vendor/three/examples/jsm/"}}</script>
 </head>
 <body>
 <header><div class="wrap header-inner"><div><div class="brand">VISI<em>O</em>N</div><div class="brand-sub">ENTREPRENEURSHIP & INNOVATION CLUB</div></div><div class="header-right"><span class="version">CHARACTER STUDY / V03</span><span class="locked"><i></i> Reference locked</span></div></div></header>
@@ -15,19 +15,19 @@
 <main class="wrap workspace">
 <section class="stage" id="stage">
 <div id="canvas-host" aria-label="Interactive 3D model of the VISION mascot"></div>
-<div class="stage-top"><div><div class="overline">CHARACTER / 01</div><div class="stage-id">Charcoal body · Yellow display · Mint indicators</div></div><div class="canvas-tag">LIVE 3D MODEL</div></div>
+<div class="stage-top"><div><div class="overline">CHARACTER / 01</div><div class="stage-id">Navy shell · Circuit-blue frame · Cyan display</div></div><div class="canvas-tag">LIVE 3D MODEL</div></div>
 <video id="camera-preview" playsinline muted autoplay></video>
 <div class="stage-bottom"><div class="speech" id="speech">Hey! Welcome to VISION.</div><div class="scene-help">Drag to rotate · Scroll to zoom</div></div>
 </section>
 <aside class="panel">
-<section class="card wide-card"><div class="card-title"><strong>Motion tests</strong><span>Procedural rig</span></div>
+<section class="card wide-card"><div class="card-title"><strong>Motion tests</strong><span>Blender GLB</span></div>
 <div class="controls">
 <button class="btn" data-motion="wave">Wave</button>
 <button class="btn" data-motion="happy">Happy</button>
 <button class="btn" data-motion="curious">Curious</button>
 <button class="btn" data-motion="surprised">Surprised</button>
-<button class="btn" data-motion="point">Point</button>
-<button class="btn" data-motion="sleep">Sleepy</button>
+<button class="btn" data-motion="point">Point</button><button class="btn" data-motion="think">Think</button>
+<button class="btn" data-motion="sleep">Sleepy</button><button class="btn" data-motion="sad">Sad</button><button class="btn" data-motion="excited">Excited</button><button class="btn" data-motion="battery">Low battery</button>
 </div>
 <button class="btn wide" id="slow-btn" style="margin-top:10px">Slow motion: off</button><p class="section-note">Wave storyboard: notice → anticipate → raise → greet → settle. Idle uses tiny breaths and natural blinking.</p>
 </section>
@@ -36,7 +36,7 @@
 <button class="btn" data-view="front">Front</button><button class="btn selected" data-view="three">3/4</button>
 <button class="btn" data-view="side">Side</button><button class="btn" data-view="back">Back</button>
 </div>
-<div class="swatches"><span class="swatch" style="background:#3b3e42"></span><span class="swatch" style="background:#0e0e0e"></span><span class="swatch" style="background:#ffd84d"></span><span class="swatch" style="background:#a8c7a6"></span><span class="swatch-info">Approved palette</span></div>
+<div class="swatches"><span class="swatch" style="background:#001737"></span><span class="swatch" style="background:#02163a"></span><span class="swatch" style="background:#00cfdb"></span><span class="swatch" style="background:#213f65"></span><span class="swatch-info">VISION Media palette</span></div>
 </section>
 <section class="card"><div class="card-title"><strong>Rendering</strong><span>Solid by default</span></div>
 <div class="controls"><button class="btn selected" id="solid-btn">Reference solid</button><button class="btn" id="holo-btn">Holo test</button></div>
@@ -50,7 +50,7 @@
 <section class="card"><div class="controls"><button class="btn" id="reset-btn">Reset pose</button><button class="btn" id="booth-btn">Booth mode</button></div></section>
 </aside>
 </main>
-<footer class="wrap"><span>VISION CLUB · MODEL STUDY, NOT A FINAL RIGGED GLB</span><span>Three.js · MediaPipe · No paid services</span></footer>
+<footer class="wrap"><span>VISION CLUB · BLENDER GLB · IDLE & WAVE</span><span>Three.js · MediaPipe · No paid services</span></footer>
 <script type="module" src="./src/main-v3.js"></script>
 </body>
 </html>

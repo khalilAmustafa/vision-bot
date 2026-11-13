@@ -1,45 +1,11 @@
-# VISION Club — Interactive Mascot (Three.js)
+# VISION Club interactive mascot
 
-**Live demo:** https://khalilamustafa.github.io/vision-bot/
+[Live preview](https://khalilamustafa.github.io/vision-bot/)
 
-Interactive, fully procedural 3D mascot for the VISION Entrepreneurship & Innovation Club booth at Applied Science Private University.
+The current mascot uses the VISION Media navy, circuit-blue, and cyan palette and the circuit-bulb chest badge. The Blender-authored GLB includes weighted arm rigs, eight body animations, and a shared expression atlas. Three.js handles viewing, animation blending, and expressions.
 
-## Status
+Open the live preview on desktop or mobile to orbit the mascot, choose a view, or trigger an animation. Optional MediaPipe face and gesture tracking runs in the browser and requires camera permission. The viewer serves Three.js locally and loads MediaPipe on demand.
 
-- **V3 reference-based model** published to `index.html`, with front/3/4/side/back view controls.
-- Designed from the approved charcoal, black, yellow and mint-green turnaround.
-- **V4 animation pass:** storyboard-timed Wave/Greet, subtle grounded Idle, gradual smile/eye morph, smooth overlap between head/body/arm and an optional ×0.5 motion review.
-- Additional procedural tests: happy, curious, surprised, point, sleep.
-- Manual controls on mobile and desktop, optional face and hand tracking from MediaPipe.
-- Solid shading by default; optional experimental hologram effect.
-- No build step; GitHub Pages deploys static files automatically on pushes to `main`.
+Run locally with `python -m http.server 4173` from the repository root. GitHub Pages deploys the static site on pushes to `main`.
 
-## Files
-
-- `src/mascot-v3.js` — scene graph, approved model geometry, morphing face texture and articulated motion
-- `src/motion-v4.js` — pure Idle/Wave animation curves with anticipation, deliberate beats and gentle recovery
-- `ANIMATION_SPEC.md` — acting storyboard and reference-based motion constraints
-- `src/main-v3.js` — viewer, lighting, camera orbit, interaction UI
-- `src/cv-v3.js` — optional camera and MediaPipe detection
-- `src/style-v3.css` — responsive studio UI
-- `REFERENCE_SPEC.md` — locked design proportions, materials and acceptance checks
-- `tools/visual-review.mjs` — browser screenshot smoke tests in GitHub Actions
-- `index-v3-preview.html` — same current studio as a direct preview file
-- `legacy-v2.html` — previous robot design preserved
-
-## Try it
-
-Visit the live demo on phone or desktop. Drag to turn, select camera view, trigger a reaction, or enable webcam (requires HTTPS and permission). Press **Booth mode** to expand the experience.
-
-The webcam feed is processed within your browser and is not stored by this app. External JS and MediaPipe models are downloaded from CDNs when needed.
-
-## Visual QA
-
-`.github/workflows/visual-review.yml` boots the page in a real Chrome browser via Playwright, captures desktop and mobile views, and fails on JavaScript page errors. The QA artifacts contain front, 3/4, side, back, wave and mobile screenshots, plus twelve staged Wave keyposes with assertions for connected shoulders and reference arm length. **Camera tracking itself is not tested in CI** and should be validated with booth lighting.
-
-## Limitations
-
-This is a **Three.js model study** with object-pivot animation, not a production Blender sculpt, deformable skeletal rig or animated GLB. It is an intentionally close procedural approximation to the locked concept image. Higher-grade squash/stretch, facial mesh deformation and exact topology require a later rigged-asset pass.
-
-
-**Design rollback:** The V5 fused-body experiment was rejected because it distorted the robot silhouette. Public preview reverted to the pre-V5 motion study; do not treat the procedural V4 as final character art.
+The model is in `assets/vision.glb`. See [the animation contract](ANIMATION_SPEC.md) and [the reference contract](REFERENCE_SPEC.md) for rig and design details. The visual review workflow checks the current GLB, and the V6 and legacy preview pages preserve earlier designs.

@@ -3,6 +3,10 @@ on:
   workflow_dispatch:
   push:
     paths:
+      - 'index.html'
+      - 'assets/vision.glb'
+      - 'src/mascot-blender.js'
+      - 'vendor/three/**'
       - 'src/*-v3.js'
       - 'src/motion-v4.js'
       - 'src/style-v3.css'

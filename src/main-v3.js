@@ -1,7 +1,8 @@
 
 import * as THREE from 'three';
+import {RoomEnvironment} from 'three/addons/environments/RoomEnvironment.js';
 import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
-import {VisionMascot} from './mascot-v3.js';
+import {VisionMascot} from './mascot-blender.js';
 import {MascotVision} from './cv-v3.js';
 
 const $=id=>document.getElementById(id);
@@ -11,9 +12,11 @@ camera.position.set(2.6,.66,5.7);
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,powerPreference:'high-performance'});
 renderer.outputColorSpace=THREE.SRGBColorSpace;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure=1.14;
-renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.8));
+renderer.toneMappingExposure=1.0;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+const frameTimes=[];const gl=renderer.getContext(),gpuExt=gl.getExtension('WEBGL_debug_renderer_info');const gpuInfo=gpuExt?gl.getParameter(gpuExt.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER);
 renderer.setClearColor(0xffffff,0);
+const pmrem=new THREE.PMREMGenerator(renderer),room=new RoomEnvironment();scene.environment=pmrem.fromScene(room,.03).texture;scene.environmentIntensity=.35;room.dispose();pmrem.dispose();
 host.appendChild(renderer.domElement);
 renderer.domElement.style.width='100%';
 renderer.domElement.style.height='100%';
@@ -35,22 +38,29 @@ const fill=new THREE.DirectionalLight('#dce3ec',.85);fill.position.set(5,3,2);sc
 const rim=new THREE.DirectionalLight('#e9fff0',2.0);rim.position.set(2.5,4,-4);scene.add(rim);
 const low=new THREE.DirectionalLight('#c9d9d1',.6);low.position.set(-4,-1,-5);scene.add(low);
 
-const bot=new VisionMascot(scene);
+const bot=new VisionMascot(scene);window.__VISION_BOT__=bot;window.__VISION_CAMERA__=camera;bot.ready.catch(()=>{});
 let motionClock=performance.now()/1000;
 let playbackRate=1;
 let debugPose=null;
 // Deterministic pose-scrubbing for visual QA. Never touches CV or actual camera state.
 window.__VISION_MOTION_REVIEW__={
-  pose(name,seconds){debugPose={name,seconds};introDone=true;bot.active={name,start:100,duration:name==='wave'||name==='greet'?3.65:2.2};bot.expression=name==='greet'?'wave':name;},
-  resume(){debugPose=null;bot.reset()},
-  status(){return {clip:bot.active?.name||'idle',camera:!!vision?.running,rate:playbackRate,rightArm:bot.parts.right.rotation.z,headTilt:bot.parts.head.rotation.z,armLength:bot.parts.rightFlipper.scale.y,shoulderX:bot.parts.right.position.x,shoulderY:bot.parts.right.position.y}}
+ pose(name,seconds){introDone=true;debugPose={name,seconds};bot.seek(name,seconds);},
+ resume(){debugPose=null;bot.resume();},
+ status(){return {...bot.status(),camera:!!vision?.running,rate:playbackRate};},
+ expression(name){bot.setExpression(name,{duration:0});},
+ metrics(reset=false){const result={calls:renderer.info.render.calls,triangles:renderer.info.render.triangles,textures:renderer.info.memory.textures,textureBytes:decodedTextureBytes(),geometries:renderer.info.memory.geometries,pixelRatio:renderer.getPixelRatio(),frameTimes:frameTimes.slice(),gpu:gpuInfo};if(reset)frameTimes.length=0;return result;},
+ view(name){cameraTarget=null;camera.position.set(...views[name]);controls.update();}
 };
+function decodedTextureBytes(){
+ const sources=new Map();const add=t=>{if(t?.isTexture&&t.image){const key=t.source?.uuid||t.uuid;if(!sources.has(key)){const bytes=t.type===THREE.HalfFloatType?8:t.type===THREE.FloatType?16:4;sources.set(key,(t.image.width||1)*(t.image.height||1)*bytes*(t.generateMipmaps?4/3:1));}}};
+ add(scene.environment);add(bot.atlas);bot.root.traverse(o=>{add(o.skeleton?.boneTexture);for(const m of o.material?[].concat(o.material):[])for(const value of Object.values(m))add(value);});return Math.ceil([...sources.values()].reduce((a,b)=>a+b,0));
+}
 let cameraTarget=null;
 const views={
- front:[0,.15,6.15],
+ front:[0,.8,6.15],
  three:[2.6,.66,5.7],
- side:[6.1,.2,0],
- back:[0,.15,-6.15]
+ side:[6.1,.8,0],
+ back:[0,.8,-6.15]
 };
 function selectView(view){
   cameraTarget=new THREE.Vector3(...views[view]);
@@ -73,7 +83,7 @@ function trigger(name){
   $('speech').textContent=speech[name]||speech.idle;
 }
 document.querySelectorAll('[data-motion]').forEach(b=>b.addEventListener('click',()=>trigger(b.dataset.motion)));
-$('reset-btn').addEventListener('click',()=>{debugPose=null;bot.reset();$('speech').textContent=speech.idle;selectView('three')});
+$('reset-btn').addEventListener('click',()=>{debugPose=null;bot.reset();playbackRate=1;slowBtn.textContent='Slow motion: off';slowBtn.classList.remove('selected');$('speech').textContent=speech.idle;selectView('three')});
 const slowBtn=$('slow-btn');
 if(slowBtn)slowBtn.addEventListener('click',()=>{
   playbackRate=playbackRate===1?.5:1;
@@ -149,8 +159,8 @@ resize();
 let prev=performance.now(),start=performance.now(),introDone=false;
 function animate(now){
   requestAnimationFrame(animate);
-  const delta=Math.min((now-prev)/1000,.05);prev=now;
-  if(!introDone&&now-start>1700){introDone=true;trigger('greet')}
+  const rawDelta=now-prev;if(now-start>4000){frameTimes.push(rawDelta);if(frameTimes.length>300)frameTimes.shift();}const delta=Math.min(rawDelta/1000,.05);prev=now;
+  if(!introDone&&bot.loaded&&now-start>1700){introDone=true;trigger('greet')}
   if(cameraTarget){
     // Orbit the character at constant radius; linear Cartesian lerp zooms through it.
     const p=new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target));
@@ -164,7 +174,7 @@ function animate(now){
     if(camera.position.distanceTo(cameraTarget)<.015)cameraTarget=null;
   }
   motionClock+=delta*playbackRate;
-  bot.update(debugPose?100+debugPose.seconds:motionClock,delta*playbackRate);
+  bot.update(motionClock,delta*playbackRate);
   controls.update();
   renderer.render(scene,camera);
 }

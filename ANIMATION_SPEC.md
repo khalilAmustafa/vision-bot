@@ -1,41 +1,25 @@
-# VISION Mascot — Animation Direction V4
+# VISION animation contract — November 12, 2026
 
-Reference lock: `REFERENCE_SPEC.md` and the approved VISION mascot turnaround in the project conversation. Do not change head/torso proportions, body charcoal, yellow face, mint V, or the paired mint indicator strips while working on animations.
+Supersedes procedural V4/V6 rules, including the old allowance for arm stretching.
 
-## Acting intent
+## Blender clips
+Idle 4.8 s; Wave 4 s; Point 3.2 s; Think 3.6 s; Happy 2.4 s; Curious 2.8 s; Surprised 2.2 s; Sleep 4.8 s. Greet aliases Wave. All clips are in assets/vision.glb.
 
-The mascot is grounded, soft and friendly: **not** a bouncy toy constantly jumping. Use small movements with readable intention and different timing for each body part. Never solve weak animation by adding holograms or glow.
+Wave: notice 0–0.25 s, anticipation 0.20–0.55 s, lift 0.55–1.15 s, two greeting oscillations 1.15–2.65 s, lower 2.65–3.65 s, settle through 4.0 s. Head tilts opposite the hand on delayed timing. Idle channels have equal endpoint transforms.
 
-## Idle — 4.7s breathing rhythm
+Shoulders belong to Body_Pivot: Blender X ±0.395, Y -0.12, Z 1.105, below the head lower edge (~1.12). Shoulder positions never change during animation. The shorter arms use separate skins and fixed sockets recessed into the torso. Each wrist articulates independently. Arms use smooth weighted skeletons: upper arm, two elbow bend segments, and wrist/hand. The upper arm lifts then holds during the greeting; the wrist produces the two oscillations. Bone lengths and scale remain fixed. No visible mechanical joints. Feet remain planted. This replaces the earlier single rigid-flipper approach after user motion feedback.
 
-- Chest/body breathing: approximately 0.7% height change, with matching subtle width compensation.
-- Root stays planted (vertical drift about 0.006 scene units, not floating).
-- Head micro-tilt and look direction move on non-synchronized 7–11 second cycles.
-- Natural closing/reopening blink, occasional double blink.
-- Both mitten arms have a subtle delayed sway; no constant limb waving.
-- Feet are planted and the approved rest silhouette remains recognizable.
+## Runtime APIs
+- setExpression(name, {duration: 0.18}): face only. Neutral, Happy, Sad, Curious, Low Battery, Sleepy, Excited, Surprised, Think; lowercase aliases accepted.
+- playAction(name, {restart: true, fade: 0.3}): body only. Interruptions and repeated actions blend from the captured current pose.
+- trigger(name, now): existing button/gesture compatibility, selecting the corresponding action and expression.
+- reset(): neutral expression, Idle, centered gaze. Page resets slow-motion speed too.
+- seek(name, seconds): deterministic paused mixer pose; resume() resumes.
+- status(): actual rig state. Page review hook exposes pose/resume/expression/view/status/metrics.
 
-## Wave / Greet — 3.65s
+A curved Face_Surface uses one packed atlas with open/closed variants for nine expressions. Expression weights blend over 180 ms. Blinks preserve the mouth. Blender uses the same image and surface. Head_Aim provides damped gaze tracking separately from authored Head_Pivot motion.
 
-| Time | Acting beat | Design rule |
-|---|---|---|
-| 0.00–0.28s | Notice visitor | Subtle gaze/head turn |
-| 0.22–0.56s | Anticipate | Tiny body compress, opposite arm pre-motion |
-| 0.56–1.12s | Raise arm | Smooth ease, mitten silhouette remains connected |
-| 1.12–2.63s | Greet | Two gentle deliberate waves; smile morphs gradually |
-| 2.61–3.65s | Recover | Soft arm settle, face returns to normal |
+## Verification
+Tests cover clip presence, horn absence, body-mounted shoulders, no scale channels, triangle budget, Idle endpoints, wave samples, fixed feet/shoulders, expression independence/blending, head tracking, interruptions, reset, slow motion, mobile layout, load failure, and mocked camera callbacks. Physical camera recognition and hardware 60 FPS are not established by mocks/software rendering.
 
-The right shoulder stays anchored to the body; no floating hand/pivot teleport. The mitten may stretch up to 16% while raised as a controlled cartoon deformation. The head and body react on offset timings rather than moving in lockstep.
-
-## Technical implementation
-
-- `src/motion-v4.js`: deterministic acting poses and easing curves, no CV dependency.
-- `src/mascot-v3.js`: actual Three.js rig transforms, eye morphing, blinking and 3D geometry.
-- `src/main-v3.js`: live motion controls, slow-motion review and a deterministic pose inspection hook.
-- `tools/visual-review.mjs`: screenshot tests, twelve discrete wave poses and arm angle acceptance.
-
-## Limitations
-
-This remains a procedural Three.js rig with independent mesh pivots and restricted squash/stretch. It is **not** skinned, sculpted or animated in Blender, and there is no production `.glb` animation clip yet. Smoothness is animation timing and posing inside the browser, not a replacement for more advanced character rigging.
-
-The CV implementation is out of scope for this iteration.
+Editable Blender Scene properties: ExpressionIndex (0–8) and Blink (0–1) drive the same atlas without affecting body actions. The exported GLB retains a neutral standard material; runtime supplies the independent expression/blink blend shader. No Blender-only handlers are needed for the GLB.
